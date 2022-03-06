@@ -1,0 +1,920 @@
+<!DOCTYPE html><html lang="en"><head><script data-ezscrex='false' data-cfasync='false' data-pagespeed-no-defer>var __ez=__ez||{};__ez.stms=Date.now();__ez.evt={};__ez.script={};__ez.ck=__ez.ck||{};__ez.template={};__ez.template.isOrig=false;__ez.queue=(function(){var count=0,incr=0,items=[],timeDelayFired=false,hpItems=[],lpItems=[],allowLoad=true;var obj={func:function(name,funcName,parameters,isBlock,blockedBy,deleteWhenComplete,proceedIfError){var self=this;this.name=name;this.funcName=funcName;this.parameters=parameters===null?null:(parameters instanceof Array)?parameters:[parameters];this.isBlock=isBlock;this.blockedBy=blockedBy;this.deleteWhenComplete=deleteWhenComplete;this.isError=false;this.isComplete=false;this.isInitialized=false;this.proceedIfError=proceedIfError;this.isTimeDelay=false;this.process=function(){log("... func = "+name);self.isInitialized=true;self.isComplete=true;log("... func.apply: "+name);var funcs=self.funcName.split('.');var func=null;if(funcs.length>3){}else if(funcs.length===3){func=window[funcs[0]][funcs[1]][funcs[2]];}else if(funcs.length===2){func=window[funcs[0]][funcs[1]];}else{func=window[self.funcName];}
+if(typeof func!=='undefined'&&func!==null){func.apply(null,this.parameters);}
+if(self.deleteWhenComplete===true)delete items[name];if(self.isBlock===true){log("----- F'D: "+self.name);processAll();}}},file:function(name,path,isBlock,blockedBy,async,defer,proceedIfError){var self=this;this.name=name;this.path=path;this.async=async;this.defer=defer;this.isBlock=isBlock;this.blockedBy=blockedBy;this.isInitialized=false;this.isError=false;this.isComplete=false;this.proceedIfError=proceedIfError;this.isTimeDelay=false;this.process=function(){self.isInitialized=true;log("... file = "+name);var scr=document.createElement('script');scr.src=path;if(async===true)scr.async=true;else if(defer===true)scr.defer=true;scr.onerror=function(){log("----- ERR'D: "+self.name);self.isError=true;if(self.isBlock===true){processAll();}};scr.onreadystatechange=scr.onload=function(){var state=scr.readyState;log("----- F'D: "+self.name);if((!state||/loaded|complete/.test(state))){self.isComplete=true;if(self.isBlock===true){processAll();}}};document.getElementsByTagName('head')[0].appendChild(scr);}},fileLoaded:function(name,isComplete){this.name=name;this.path="";this.async=false;this.defer=false;this.isBlock=false;this.blockedBy=[];this.isInitialized=true;this.isError=false;this.isComplete=isComplete;this.proceedIfError=false;this.isTimeDelay=false;this.process=function(){};}};function init(){window.addEventListener("load",function(){setTimeout(function(){timeDelayFired=true;log('TDELAY -----');processAll();},5000);},false);}
+function addFile(name,path,isBlock,blockedBy,async,defer,proceedIfError,priority){var item=new obj.file(name,path,isBlock,blockedBy,async,defer,proceedIfError);if(priority===true){hpItems[name]=item}else{lpItems[name]=item}
+items[name]=item;checkIfBlocked(item);}
+function setallowLoad(settobool){allowLoad=settobool}
+function addFunc(name,func,parameters,isBlock,blockedBy,autoInc,deleteWhenComplete,proceedIfError,priority){if(autoInc===true)name=name+"_"+incr++;var item=new obj.func(name,func,parameters,isBlock,blockedBy,deleteWhenComplete,proceedIfError);if(priority===true){hpItems[name]=item}else{lpItems[name]=item}
+items[name]=item;checkIfBlocked(item);}
+function addTimeDelayFile(name,path){var item=new obj.file(name,path,false,[],false,false,true);item.isTimeDelay=true;log(name+' ... '+' FILE! TDELAY');lpItems[name]=item;items[name]=item;checkIfBlocked(item);}
+function addTimeDelayFunc(name,func,parameters){var item=new obj.func(name,func,parameters,false,[],true,true);item.isTimeDelay=true;log(name+' ... '+' FUNCTION! TDELAY');lpItems[name]=item;items[name]=item;checkIfBlocked(item);}
+function checkIfBlocked(item){if(isBlocked(item)===true||allowLoad==false)return;item.process();}
+function isBlocked(item){if(item.isTimeDelay===true&&timeDelayFired===false){log(item.name+" blocked = TIME DELAY!");return true;}
+if(item.blockedBy instanceof Array){for(var i=0;i<item.blockedBy.length;i++){var block=item.blockedBy[i];if(items.hasOwnProperty(block)===false){log(item.name+" blocked = "+block);return true;}else if(item.proceedIfError===true&&items[block].isError===true){return false;}else if(items[block].isComplete===false){log(item.name+" blocked = "+block);return true;}}}
+return false;}
+function markLoaded(filename){if(!filename||0===filename.length){return;}
+if(filename in items){var item=items[filename];if(item.isComplete===true){log(item.name+' '+filename+': error loaded duplicate')}else{item.isComplete=true;item.isInitialized=true;}}else{items[filename]=new obj.fileLoaded(filename,true);}
+log("markLoaded dummyfile: "+items[filename].name);}
+function logWhatsBlocked(){for(var i in items){if(items.hasOwnProperty(i)===false)continue;var item=items[i];isBlocked(item)}}
+function log(msg){var href=window.location.href;var reg=new RegExp('[?&]ezq=([^&#]*)','i');var string=reg.exec(href);var res=string?string[1]:null;if(res==="1")console.debug(msg);}
+function processAll(){count++;if(count>200)return;log("let's go");processItems(hpItems);processItems(lpItems);}
+function processItems(list){for(var i in list){if(list.hasOwnProperty(i)===false)continue;var item=list[i];if(item.isComplete===true||isBlocked(item)||item.isInitialized===true||item.isError===true){if(item.isError===true){log(item.name+': error')}else if(item.isComplete===true){log(item.name+': complete already')}else if(item.isInitialized===true){log(item.name+': initialized already')}}else{item.process();}}}
+init();return{addFile:addFile,addDelayFile:addTimeDelayFile,addFunc:addFunc,addDelayFunc:addTimeDelayFunc,items:items,processAll:processAll,setallowLoad:setallowLoad,markLoaded:markLoaded,logWhatsBlocked:logWhatsBlocked,};})();__ez.evt.add=function(e,t,n){e.addEventListener?e.addEventListener(t,n,!1):e.attachEvent?e.attachEvent("on"+t,n):e["on"+t]=n()},__ez.evt.remove=function(e,t,n){e.removeEventListener?e.removeEventListener(t,n,!1):e.detachEvent?e.detachEvent("on"+t,n):delete e["on"+t]};__ez.script.add=function(e){var t=document.createElement("script");t.src=e,t.async=!0,t.type="text/javascript",document.getElementsByTagName("head")[0].appendChild(t)};__ez.dot={};</script>
+<script>var __sellerid="54e7e14fb84a89f0afb117bce3376c35";var __ez_nid ="1254144";__advertiserRule=[''];</script>
+<script>var ezasVars = {'cid':'2227900212','pid':'pub-4140428241256169'};</script>
+<script>window.ezhbopt=true;</script>
+<link rel='preload' as='script' href='//securepubads.g.doubleclick.net/tag/js/gpt.js'>
+<link href="//ad.doubleclick.net" rel="dns-prefetch">
+<link href="//pagead2.googlesyndication.com" rel="dns-prefetch">
+<link href="//googleads.g.doubleclick.net" rel="dns-prefetch">
+<link href="//tpc.googlesyndication.com" rel="dns-prefetch">
+<link href="//adservice.google.com" rel="dns-prefetch">
+<link href="//secureads.g.doubleclick.net" rel="dns-prefetch">
+<link href="//www.googletagservices.com" rel="dns-prefetch">
+<link rel='preload' as='script' href='//go.ezodn.com/hb/dall.js?b=amx,ix,onetag,openx,pubmatic,smilewanted,unruly,yieldmo&cb=195-2-30'>
+<script async="" src="//c.amazon-adsystem.com/aax2/apstag.js"></script>
+<script data-cfasync="false" type="text/javascript" data-pagespeed-no-defer>var __ezaps=[{"slotID":"div-gpt-ad-omnisecu_com-box-2-0","slotName":"/1254144,21902746844/omnisecu_com-box-2","sizes":[[728,90]]},{"slotID":"div-gpt-ad-omnisecu_com-box-1-0","slotName":"/1254144,21902746844/omnisecu_com-box-1","sizes":[[300,250]]},{"slotID":"div-gpt-ad-omnisecu_com-medrectangle-2-0","slotName":"/1254144,21902746844/omnisecu_com-medrectangle-2","sizes":[[970,90],[728,90]]},{"slotID":"div-gpt-ad-omnisecu_com-banner-2-0","slotName":"/1254144,21902746844/omnisecu_com-banner-2","sizes":[[300,250]]},{"slotID":"div-gpt-ad-omnisecu_com-medrectangle-1-0","slotName":"/1254144,21902746844/omnisecu_com-medrectangle-1","sizes":[[250,250]]}];var __ezapid="aa05931b-5308-4ea3-95a2-adf84f4ffde4";!function(a9,a){if(a[a9])return;function q(c,r){a[a9]._Q.push([c,r])}
+a[a9]={init:function(){q("i",arguments)},fetchBids:function(){q("f",arguments)},setDisplayBids:function(){},targetingKeys:function(){return[]},_Q:[]};}("apstag",window);var schain_domain='ezoic.ai';if(typeof __ez_nid!='undefined'&&__ez_nid==21732118914){schain_domain='ezoic.co.uk';}
+apstag.init({pubID:__ezapid,adServer:'googletag',schain:{complete:1,ver:'1.0',nodes:[{asi:schain_domain,sid:__sellerid,hp:1}]}});function getAmazonSlotById(id){if(typeof __ezaps==='undefined'){return;}
+for(var i=0;i<__ezaps.length;i++){var slot=__ezaps[i];if(typeof slot==='undefined'){continue;}
+var slotId=slot.slotID;if(typeof slotId!=='undefined'&&slotId==id){return slot;}}
+return false;}
+function ezapsFetchBids(amazonSlots){if(typeof amazonSlots==='undefined'||amazonSlots.length===0){return}
+apstag.fetchBids({slots:amazonSlots,timeout:2e3},function(bids){function getSlotById(id){if(typeof window.ezslots==='undefined'||window.ezslots==0){return;}
+for(var i=0;i<window.ezslots.length;i++){var slot=window[ezslots[i]];if(typeof slot==='undefined'){continue;}
+var slotId=slot.getSlotElementId();if(typeof slotId!=='undefined'&&slotId==id){return slot;}}}
+function setA9DisplayBids(bids){if(typeof bids==='undefined'||bids.length==0){return;}
+var keys=apstag.targetingKeys();for(var i=0;i<bids.length;i++){var bid=bids[i];for(var k=0;k<keys.length;k++){if(keys[k]in bid){ezSetSlotTargeting(bid.slotID,keys[k],bid[keys[k]]);}}}}
+setA9DisplayBids(bids);});}
+if(typeof __tcfapi!="undefined"){}else{ezapsFetchBids(__ezaps);}</script>
+<script type="text/javascript">
+	var __banger_pmp_deals=function(){var d={17:{"DealId":17,"Floor":160},18:{"DealId":18,"Floor":25},19:{"DealId":19,"Floor":100},20:{"DealId":20,"Floor":300},1428:{"DealId":1428,"Floor":25}};return[{"SlotName":"/1254144,21902746844/omnisecu_com-medrectangle-1","Deals":[d[17],d[18],d[19],d[20],d[1428]]},{"SlotName":"/1254144,21902746844/omnisecu_com-box-1","Deals":[d[17],d[18],d[19],d[20],d[1428]]},{"SlotName":"/1254144,21902746844/omnisecu_com-box-2","Deals":[d[18],d[19],d[1428]]},{"SlotName":"/1254144,21902746844/omnisecu_com-medrectangle-2","Deals":[d[17],d[18],d[19],d[20],d[1428]]},{"SlotName":"/1254144,21902746844/omnisecu_com-banner-2","Deals":[d[17],d[18],d[19],d[1428]]}]}();
+</script>
+<script type='text/javascript'>_ebcids=[138231308856,138231308940,138231308949,138231387842,138231421744,138231421759,138231421774,138231421783,138231421789,138231421792,138242067587,138242067590,138242067602,138242067605,138242067608,138242067614,138242229406,138242229415,138242229421,138242229430];</script>
+<script data-ezscrex="false" data-cfasync="false" data-pagespeed-no-defer type='text/javascript'>ezobv=80;</script><script data-ezscrex="false" data-cfasync="false" data-pagespeed-no-defer type='text/javascript'>function ez_isclean(data){if(typeof data==='undefined'){data=document.URL;}
+var re=/(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))(@|%2540|%40)((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/;var isClean=!re.test(data);return isClean;}
+var ezSlotKVStore={};function ezSetSlotTargeting(divid,key,value){var slot=ezGetSlotById(divid);if(slot){slot.setTargeting(key,value);}else{if(typeof ezSlotKVStore[divid]=='undefined'){ezSlotKVStore[divid]={};}
+ezSlotKVStore[divid][key]=value;}}
+function ezGetSlotById(id){if(typeof window.ezslots==='undefined'||window.ezslots==0){return;}
+for(var i=0;i<window.ezslots.length;i++){var slot=window[ezslots[i]];if(typeof slot==='undefined'){continue;}
+var slotId=slot.getSlotElementId();if(typeof slotId!=='undefined'&&slotId==id){return slot;}}}
+function ezSetTargetingFromMap(slot,obj){if(typeof slot==='undefined'){return;}
+for(var key in obj){if(!obj.hasOwnProperty(key)){continue;}
+slot.setTargeting(key,obj[key]);}}
+var ez_queue=new Array();function sort_queue(a,b)
+{if(a.priority<b.priority)return-1;else if(a.priority==b.priority)return 0;else return 1;}
+function execute_ez_queue()
+{ez_queue.sort(sort_queue);for(var i in ez_queue)
+{if(typeof ez_queue[i].method!="undefined")
+{try{ez_queue[i].method.call(null);}
+catch(err){}}}}
+window.ez_ad_units=new Array();window.ezslots=new Array();window.ezsrqt={};function ez_write_tag(d){if(ez_isclean()&&d instanceof Array){if(typeof ezstandalone!=='undefined'&&typeof ezstandalone.selectedPlaceholders!=='undefined'&&ezstandalone.selectedPlaceholders[d[3]]===true){return "1+1";}
+ez_ad_units[ez_ad_units.length]=d;var dve="";if(typeof d[5]!='undefined'&&d[5]>0){dve='_'+d[5];}
+var ezcmd="googletag.cmd.push(function() {var divid = 'div-gpt-ad-"+d[1]+"-"+d[4]+""+dve+"';if(typeof ezlrarn == 'function'){ezlrarn(divid);}googletag.display(divid);var to = 0;if("+d[2]+".getTargeting('ga')[0] == '0'){to = 500;}if((window.ezDisableInitialLoad==true || googletag.pubads().isInitialLoadDisabled()) && window.ezoll != true){setTimeout(function(){if(typeof window.adjustHbValues == 'function'){window.adjustHbValues("+d[2]+");}googletag.pubads().refresh(["+d[2]+"])},to);}});";return ezcmd;}
+return "1+1";}
+function in_array(needle,haystack){var length=haystack.length;for(var i=0;i<length;i++){if(haystack[i]==needle)return true;}
+return false;}
+var ezrpos=new Array();var ez_current_interval;var ez_current_load=0;function __ez_fad_load(n,r){if(!__ez_fad_csnt()||!__ez_fad_rdy()||ezslit_run[n]===true||typeof __ez_fad_divs[n]==='undefined'||__ez_fad_divs[n].length===0){return;}
+ezslit_run[n]=true;__ez_fad_gpt();if(n>0&&n!==5){__ez_fad_pb();}
+googletag.cmd.push(function(){var s=[];for(var i=0;i<__ez_fad_divs[n].length;i++){if(__ez_fad_divsd.indexOf(__ez_fad_divs[n][i])==-1){__ez_fad_divsd.push(__ez_fad_divs[n][i]);s.push(__ez_fad_initslot[__ez_fad_divs[n][i]](r));googletag.display(__ez_fad_divs[n][i]);}}
+var ws=[];for(i3=0;i3<s.length;i3++){if(typeof window.adjustHbValues==='function'){window.adjustHbValues(window[s[i3]]);}
+ws.push(window[s[i3]]);}
+googletag.pubads().refresh(ws);setTimeout(__ez_fad_floatshow,0);});if(n===0){if(document.readyState==="complete"){googletag.cmd.push(function(){__ez_fad_load(5,null);});setTimeout(function(){__ez_fad_load(1,null);__ez_fad_load(5,null);},5500);return;}
+document.addEventListener('DOMContentLoaded',function(evt){googletag.cmd.push(function(){__ez_fad_load(5,null);});setTimeout(function(){__ez_fad_load(1,null);__ez_fad_load(5,null);},5500);},false);}}
+var __ez_fad_floatshowd=false;function __ez_fad_floatshow(d){if(__ez_fad_floatshowd===true||typeof __ez_fad_floating==='undefined'){return;}
+__ez_fad_floatshowd=true;var e=document.getElementById('ezmobfooter');if(e!=null){e.classList.add('ezmobtrans');}else{head=document.head||document.getElementsByTagName('head')[0],style=document.createElement('style');head.appendChild(style);var css="body > #ezmobfooter{bottom:0px !important;visibility:visible;}";style.type='text/css';if(style.styleSheet){style.styleSheet.cssText=css;}else{style.appendChild(document.createTextNode(css));}}
+googletag.cmd.push(function(){for(var i=0;i<__ez_fad_floating.length;i++){var s=__ez_fad_initslot[__ez_fad_floating[i]](null);googletag.display(__ez_fad_floating[i]);if(typeof window.adjustHbValues==='function'){window.adjustHbValues(window[s]);}
+googletag.pubads().refresh([window[s]]);}});}
+var __ez_fad_initslot={};var __ez_fad_fastd=[];var __ez_fad_fastdiv=[];var __ez_fad_fastslots=[];var __ez_fad_viewslots=[];var __ez_fad_instaslots=[];var ezslit_run=[];var __ez_fad_divs=[[],[],[],[],[],[],[]];__ez_fad_divpos={};var __ez_fad_divsd=[];var __ez_fad_vw=window.screen.width;var __ez_fad_vh=window.screen.height;var __ez_fad_count=0;function __ez_fad_invisible(e){!!(e.offsetWidth||e.offsetHeight||e.getClientRects().length)}
+function __ez_fad_position(id){var did=document.getElementById(id);if(did!=null){var rect=did.getBoundingClientRect();var vs=window.scrollY||document.body.scrollTop||document.documentElement.scrollTop;var vh=vs+__ez_fad_vh;_ez_fad_vw=window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth;__ez_fad_vh=window.innerHeight||Math.max(document.documentElement.clientHeight,document.body.clientHeight);var height_adjust=800;if(__ez_fad_vw<1200){height_adjust=__ez_fad_vh*1.25;vh+=0;}
+if(__ez_fad_floating.indexOf(id)==-1){__ez_fad_divpos[id]=rect.top;if(__ez_fad_invisible(did)&&isFloat!=true){__ez_fad_divs[4].push(id);}else if(rect.top<vh&&(ezslit_run[0]!=true||ezslit_run[5]!=true)){if(ezslit_run[0]!=true){__ez_fad_gpt();__ez_fad_divs[0].push(id);}else{__ez_fad_divs[5].push(id);}}else if(rect.top<(vh+height_adjust)&&ezslit_run[1]!=true){if(ezslit_run[0]!=true){__ez_fad_load(0,0);};__ez_fad_divs[1].push(id);}else if(rect.top<(vh+height_adjust+(__ez_fad_vh))&&ezslit_run[2]!=true){if(ezslit_run[0]!=true){__ez_fad_load(0,0);}
+__ez_fad_divs[2].push(id);}else{__ez_fad_divs[3].push(id);}
+__ez_fad_count++;}}}
+function __ez_fad_fast(s,f,m){if(__ez_fad_fastd.indexOf(s)==-1){__ez_fad_fastd.push(s);googletag.cmd.push(function(){var ebbr2='empty';var br2=0;if(typeof ezoibfh[f]!='undefined'){ebbr2=ezoibfh[f];br2=f;}
+if(typeof window['ezslot_'+s]!='undefined'){var br1=parseInt(window['ezslot_'+s].getTargeting('br1')[0]);if(isNaN(br1)||br2<br1){window['ezslot_'+s].setTargeting('br1',br2).setTargeting('eb_br',ebbr2);if(m!=null){window['ezslot_'+s].setTargeting('bvr',m);}}else{}}else{}});}}
+function __ez_fad_csnt(){return document.cookie.indexOf('ezCMPCookieConsent')!==-1||typeof __ez_conestreq=='undefined';}
+var __ez_fad_haspo=false;if(typeof PerformanceObserver!='undefined'&&typeof PerformanceObserver.supportedEntryTypes!='undefined'){if(PerformanceObserver.supportedEntryTypes.indexOf('largest-contentful-paint')>-1){__ez_fad_haspo=true;}}
+function __ez_fad_rdy(){if(document.body!==null&&(__ez_fad_haspo==false&&__ez_fad_doc_ht>__ez_fad_vp_ht||__ez_fad_hascp)||document.readyState==="complete"){return true;}else{__ez_fad_doc_ht=__ez_fad_docht();__ez_fad_vp_ht=__ez_fad_vpht();}
+return false;}
+function __ez_fad_docht(){if(typeof document.body!='undefined'&&document.body!=null){return Math.max(document.body.scrollHeight,document.body.offsetHeight);}else if(typeof document.documentElement!='undefined'){return Math.max(document.documentElement.clientHeight,document.documentElement.scrollHeight,document.documentElement.offsetHeight);}else{return 0;}}
+function __ez_fad_vpht(){if(typeof window.innerHeight!='undefined'){return window.innerHeight;}else if(typeof document.body!='undefined'&&document.body!=null){return document.body.clientHeight;}else if(typeof document.documentElement!='undefined'){return document.documentElement.clientHeight;}
+else{return 0;}}
+var __ez_fad_doc_ht=__ez_fad_docht();var __ez_fad_vp_ht=__ez_fad_vpht();var __ez_fad_hascp=false;try{const __ez__fad_po=new PerformanceObserver((entryList)=>{__ez_fad_hascp=true;});__ez__fad_po.observe({type:'largest-contentful-paint',buffered:true});}catch(e){}</script><script type='text/javascript' data-ezscrex="false">var ezorbf = []; </script><script data-ezscrex="false" data-cfasync="false" data-pagespeed-no-defer type='text/javascript'>window.isEZABL=false;window.ezmadspc=300;window.ezoViewCheck=false;</script><script data-ezscrex="false" data-cfasync="false" data-pagespeed-no-defer type='text/javascript'>window.ezDisableInitialLoad=false;</script><script data-ezscrex="false" data-cfasync="false" data-pagespeed-no-defer type='text/javascript'>window.googletag=window.googletag||{};googletag.cmd=googletag.cmd||[];</script><script type='text/javascript' data-ezscrex="false">window.addEventListener("EzoIvent",function(a){if(a.detail[0]>1||a.detail[0]<0){(function(){var gads=document.createElement('script');gads.async=true;gads.type='text/javascript';gads.onload=function(){if(typeof ezogallbs=='function'){ezogallbs()}};var useSSL='https:'==document.location.protocol;gads.src=(useSSL?'https:':'http:')+
+'//securepubads.g.doubleclick.net/tag/js/gpt.js';var node=document.getElementsByTagName('script')[0];node.parentNode.insertBefore(gads,node);})();}});</script><script data-ezscrex="false" data-cfasync="false" data-pagespeed-no-defer type='text/javascript'>window.ezogetbrkey = function(s){ var k = 'br1';var k2 = 'eb_br';if(window.ezogtk == ""){k='br1u';k2='eb_bru';}else if(window.ezogtk != "NT"){k='br1t';k2='eb_brt';} s.setTargeting('br1', s.getTargeting(k));s.setTargeting('eb_br', s.getTargeting(k2));};googletag.cmd.push(function() {googletag.pubads().enableSingleRequest();googletag.pubads().addEventListener('slotRenderEnded', function(event) { __ez.queue.addFunc("ezbanger", "ezbanger", event, false, ['banger.js'], true, true, false, true); });googletag.pubads().addEventListener('impressionViewable', function(event) { __ez.queue.addFunc("ezvb", "ezvb", event, false, ['banger.js'], true, true, false, true); });googletag.pubads().addEventListener('slotResponseReceived', function(event) { __ez.queue.addFunc("ezsr", "ezsr", event, false, ['banger.js'], true, true, false, true); });googletag.pubads().addEventListener('slotRequested', function(e) { window.ezsrqt[e.slot.getSlotElementId()] = Date.now();});googletag.pubads().disableInitialLoad();googletag.pubads().disableInitialLoad();googletag.pubads().enableLazyLoad({fetchMarginPercent: -1, renderMarginPercent: 250, mobileScaling: 2.0});googletag.enableServices();});window.ezoll = false;window.ezoadxnc = '1254144';window.ezoadhb = '300';var ezoibfh = {0:'zero',1000000:'off',3400:'2c0082dd1efc5e4dfdd4f50677fea822',2800:'a9ec56005762ef40746ec1b6d554f472',2600:'cc65d2d1fcda72df55233f97cf215dad',280:'c16fac08e79a971524b1c6834f5caad3',12:'14e8a85d4c42ff1db8790cbef9e33493',4:'9c3e4ee8eae7f1433cb2fe69b1326605',6000:'49d60519eec4f00cfb2d91dec1e48d41',1600:'6dbaa2f5e27e83e2fcd15988d9095988',160:'3530fcb6bcc13dc3c1712eaef7d92700',120:'58ef7bddb438af5e257c4377f32c243a',80:'dfa60cee6e1053fc0c9e607c8047bd28',60:'c352ba581bd3ffd8cea608cf2d55f519',10:'291d27313eb66c50243129b23df8a579',6500:'b6ac10cddc8471927cec0144110502e9',2700:'401612ca672af30f67eaf5e0989ce385',2400:'6240c545bce1855c4e5a6ca430f526b1',650:'5bac35e1a3b6adc56da706000a645484',100:'a495ce7dbb4cefcd3e0a722048894f41',22:'1e913e99b80640fd5b86a539e5b97c94',950:'c410f2a2b0c2123f4b6651cda6c5cf53',70:'527e52c10635ac8136a4c84094ee49a8',30:'54d0fa6d5f6aabe7623cb24faa42a441',26:'bf9a045b836005b6c23b7b0749249612',10000:'f1e225445ec024e41bfd8ce2ba4aa91b',4200:'e9b52ed700c176b9b3f036aa176f3f3e',3800:'58e03b675175bbbec8566d319041c5ee',900:'eeb0e32289ff31f9ddef18331038e5e9',300:'90c3c48d0172916d27c102ea4aa9d49c',4800:'f0459c7057d45e6fbbed62c0762b551e',3200:'41ad5c6ea7dab736638507e437e60604',1200:'736e09a0771285737509ab8954c475a7',220:'43aa1607a0c08c74b14a9039e7b909b4',38:'23b5ca1d9de2587e6a4ecfd33d61b709',34:'a7a863b24978e69c4cdbb5a49be70d5e',9000:'e4c87a0c427c95c548a2ad50bc2fc99d',5000:'116f73d8738ced0c5546d5313109581e',1500:'d81e229576f8cb8a43ff5c6a8e596727',140:'af063c244089b52ec5a0423a258f1f8e',90:'b355e9227b551c119a30a68852723b62',50:'3ba982fc4238dd4197b1d51b345478dc',28:'674294a1b21a1e89fc99c14c9b17be44',5500:'b069a06daabd6e3043166f0e7a2edef4',1800:'72c13a89ac876aaffdde39253459460b',1700:'ff69c327c284033fca821ae81630bfa9',1400:'04b5efc3207e2390972f099a6a3c4757',240:'8de2c8ca79e8623e3cb37120a35ebaa2',46:'fe5b0c99ab7ba15f050582be1301303f',6:'33dd523f8e4dda158f0aa99686dda7f2',8500:'d5abc50791c030d76efa2ded02dcc115',1900:'65b2c11be72ed8610e2ac0304f3023a9',1000:'c5429b6ddd929d0bc40a832a87789a7c',800:'dc3573d5dc41abdf97751be02f53537f',200:'86802a923a1f32517e4c5d3b6d550271',24:'e66c30deca31b19eda212eeca1258584',4400:'a2de9c8773c426848d7815dff1d2d44f',20:'7432360301409ae695ba255f16fbcf06',18:'8de355ef1cf56b7da61277050d9957b1',4000:'e95a0029a1c0d52e1f82ee010826e7d9',850:'5297de5240aa45da173a0792747e0d26',750:'6ac330e431a70c7d8ce9fb95aee95c72',550:'26dfa00588543c52511429ade391f561',36:'8c5ffefb122f59a66a8b7672d4452af2',32:'d31e71883d00099e275b6c5878eed023',14:'ad0061a38dd7c6f7bcb692aee88dfda4',2:'b6c98a8bb15764f1c4ee331dcb724178',7500:'0de5c793b95df3adacbee8e14c308afc',1100:'39abb99448d54704c4afa42efe76e15d',500:'5f2b94bb26a5aa9b1a00e66d30cfd5ec',260:'57914c3716312cb7e954090f0717ea25',180:'9ae587f95e95c876b7b76fd4c72a3838',48:'8fc09e60bfd78aa82afac0405213359a',7000:'4552fb4beab2a055aec0d6113a8d9e42',2200:'2620dac3b050a8e36c132f49cccab5a1',2100:'b2ac58e6c0c84fc65f344f47dd85768b',700:'8b07bae800b215e481d05a271b3e723b',450:'6e85b37de1b1ffc2593baa5d6e4b02fc',8:'2e8b8c60843e52e5aaa1e3a52287a2bb',4600:'d297138284357206d38c781a2291b99a',2500:'78e9436ba8e29037bc31f94589331e0b',400:'76163170a8636ae5b88417f095893e08',350:'9e0a1ce5b2455cb9b48d5df4c6bf4053',42:'947f1d5169cc7d0f997560e34838fb04',16:'e29f69dd468d31a5514dc9b5587ce757',9500:'6fd3046d2172040882079eb07d0038c9',2000:'12a3b3570adcf20fd41a00445219acaa',44:'a928cf2c3ad36f5e9ed2d90f655c1dc9',40:'ee685f77592ce296910ee91457d66ba3',600:'45a351e981f435b4c20fafca8a5d741c',8000:'e41b3739f340bda9dcfb30f79c9db1c9',3600:'81f896ad12450b2f0257b1df6d3f1edc',3000:'92831edb305b955e915a7cc2288d5df6',2900:'ef3231a19d034bff92faf99318a47a5f',2300:'a835e008e248a793da87524a4919f755',1300:'bfa042bdb1583c959161b7823290dc1f'};var ezaxmns={};var ezaucmns={};ezaxmns["div-gpt-ad-omnisecu_com-medrectangle-2-0"]=0;ezaucmns["div-gpt-ad-omnisecu_com-medrectangle-2-0"]=0;ezaxmns["div-gpt-ad-omnisecu_com-box-2-0"]=0;ezaucmns["div-gpt-ad-omnisecu_com-box-2-0"]=0;ezaxmns["div-gpt-ad-omnisecu_com-medrectangle-1-0"]=0;ezaucmns["div-gpt-ad-omnisecu_com-medrectangle-1-0"]=0;ezaxmns["div-gpt-ad-omnisecu_com-box-1-0"]=0;ezaucmns["div-gpt-ad-omnisecu_com-box-1-0"]=0;ezaxmns["div-gpt-ad-omnisecu_com-banner-2-0"]=0;ezaucmns["div-gpt-ad-omnisecu_com-banner-2-0"]=0;
+
+		var __ez_fad_floating = ['div-gpt-ad-omnisecu_com-medrectangle-2-0'];
+		var __ez_fad_gptd = false;var __ez_fad_ezpbinitd = false;function __ez_fad_gpt(){if(__ez_fad_gptd == false){__ez_fad_gptd=true;(function(){var gads=document.createElement('script');gads.async=true;gads.type='text/javascript';var useSSL='https:'==document.location.protocol;gads.src=(useSSL?'https:':'http:')+
+'//securepubads.g.doubleclick.net/tag/js/gpt.js';var node=document.getElementsByTagName('script')[0];node.parentNode.insertBefore(gads,node);})();}}function __ez_fad_pb(){if(__ez_fad_ezpbinitd==false && typeof __ez_fad_ezpbinit == 'function'){__ez_fad_ezpbinitd = true;__ez_fad_ezpbinit()}};
+		__ez_fad_initslot['div-gpt-ad-omnisecu_com-medrectangle-2-0'] = function(bvr){
+				googletag.cmd.push(function() {
+				var did = 'div-gpt-ad-omnisecu_com-medrectangle-2-0';
+				ezslot_2 = googletag.defineSlot('/1254144,21902746844/omnisecu_com-medrectangle-2',[970,90],'div-gpt-ad-omnisecu_com-medrectangle-2-0').addService(googletag.pubads()).setCollapseEmptyDiv(false);ezSetTargetingFromMap(ezslot_2,{'a':'1','iid1':'210196456812937','eid':'210196456812937','t':'134','d':'147239','t1':'134','pvc':'0','ap':'1100','sap':'1100','a':'|124|','as':'revenue','plat':'1','bra':'mod1','ic':'1','at':'mbf','adr':'399','ezosn':'2','reft':'tf','refs':'30','ga':'2497208','gala':'','rid':'99998','pt':'5','al':'1005','compid':'0','tap':'omnisecu_com-medrectangle-2-210196456812937','eb_br':'90c3c48d0172916d27c102ea4aa9d49c','eba':'1','ebss':[10017,10082,10061,10015,11304,11307],'asau':'3694313487','bv':'16','bvm':'0','bvr':'6','shp':'1','ftsn':'3','br1':'300','br2':'140','ezoic':'1','nmau':'0','mau':'0','stl':[157,168,0,78,0,131,192,0,32,197,205,0],'deal1':[21,22,23,24,25,26,27,28,29,30,760,761,813,815,816,817,818,819,899,917,918,919,1794,774],'ax_ssid':'10082'});ezrpos[2]="2";ezslots.push("ezslot_2");
+				if(bvr != null){
+					if(typeof __ez_fad_fastslots['div-gpt-ad-omnisecu_com-medrectangle-2-0'] == 'function') {
+						__ez_fad_fastslots['div-gpt-ad-omnisecu_com-medrectangle-2-0']();
+					}
+				}
+				if(typeof ezSlotKVStore != 'undefined' && typeof ezSlotKVStore[did] != 'undefined') {
+					for (var name in ezSlotKVStore[did]) {
+						if (!ezSlotKVStore.hasOwnProperty(name)) {
+							ezSetSlotTargeting(did, name, ezSlotKVStore[did][name]);
+						}
+					}
+					ezSlotKVStore[did] = {};
+				}
+			});return "ezslot_2";};
+			__ez_fad_fastslots['div-gpt-ad-omnisecu_com-medrectangle-2-0'] = function(){__ez_fad_fastdiv.push('div-gpt-ad-omnisecu_com-medrectangle-2-0'); __ez_fad_fast('2',100,null);};
+			__ez_fad_viewslots['div-gpt-ad-omnisecu_com-medrectangle-2-0'] = function(){__ez_fad_fastdiv.push('div-gpt-ad-omnisecu_com-medrectangle-2-0'); __ez_fad_fast('2',240,null);};
+			__ez_fad_instaslots['div-gpt-ad-omnisecu_com-medrectangle-2-0'] = function(){__ez_fad_fastdiv.push('div-gpt-ad-omnisecu_com-medrectangle-2-0'); __ez_fad_fast('2',0,0);};__ez_fad_initslot['div-gpt-ad-omnisecu_com-box-2-0'] = function(bvr){
+				googletag.cmd.push(function() {
+				var did = 'div-gpt-ad-omnisecu_com-box-2-0';
+				ezslot_0 = googletag.defineSlot('/1254144,21902746844/omnisecu_com-box-2',[[728,90],[234,60],[468,60]],'div-gpt-ad-omnisecu_com-box-2-0').addService(googletag.pubads()).setCollapseEmptyDiv(false);ezSetTargetingFromMap(ezslot_0,{'a':'1','iid1':'4858099226756426','eid':'4858099226756426','t':'134','d':'147239','t1':'134','pvc':'0','ap':'1107','sap':'1107','a':'|252|','as':'revenue','plat':'1','bra':'mod1','ic':'1','at':'mbf','adr':'399','ezosn':'0','reft':'n','refs':'30','ga':'2497208','gala':'','rid':'99998','pt':'1','al':'1001','compid':'0','tap':'omnisecu_com-box-2-4858099226756426','eb_br':'af063c244089b52ec5a0423a258f1f8e','eba':'1','ebss':[10017,10082,10061,10015,11304,11307],'asau':'3694313487','bv':'0','bvm':'2','bvr':'1','shp':'1','ftsn':'3','acptad':'1','br1':'140','br2':'70','ezoic':'1','nmau':'0','mau':'0','stl':[34,25,0,4,0,193,20,192,26,156,187,77],'deal1':[17,20,21,22,23,24,25,26,27,815,817,899,919,1794,774],'ax_ssid':'10082'});ezrpos[0]="0";ezslots.push("ezslot_0");
+				if(bvr != null){
+					if(typeof __ez_fad_fastslots['div-gpt-ad-omnisecu_com-box-2-0'] == 'function') {
+						__ez_fad_fastslots['div-gpt-ad-omnisecu_com-box-2-0']();
+					}
+				}
+				if(typeof ezSlotKVStore != 'undefined' && typeof ezSlotKVStore[did] != 'undefined') {
+					for (var name in ezSlotKVStore[did]) {
+						if (!ezSlotKVStore.hasOwnProperty(name)) {
+							ezSetSlotTargeting(did, name, ezSlotKVStore[did][name]);
+						}
+					}
+					ezSlotKVStore[did] = {};
+				}
+			});return "ezslot_0";};
+			__ez_fad_fastslots['div-gpt-ad-omnisecu_com-box-2-0'] = function(){__ez_fad_fastdiv.push('div-gpt-ad-omnisecu_com-box-2-0'); __ez_fad_fast('0',46,null);};
+			__ez_fad_viewslots['div-gpt-ad-omnisecu_com-box-2-0'] = function(){__ez_fad_fastdiv.push('div-gpt-ad-omnisecu_com-box-2-0'); __ez_fad_fast('0',120,null);};
+			__ez_fad_instaslots['div-gpt-ad-omnisecu_com-box-2-0'] = function(){__ez_fad_fastdiv.push('div-gpt-ad-omnisecu_com-box-2-0'); __ez_fad_fast('0',0,0);};__ez_fad_initslot['div-gpt-ad-omnisecu_com-medrectangle-1-0'] = function(bvr){
+				googletag.cmd.push(function() {
+				var did = 'div-gpt-ad-omnisecu_com-medrectangle-1-0';
+				ezslot_4 = googletag.defineSlot('/1254144,21902746844/omnisecu_com-medrectangle-1',[[250,250],[120,240],[200,200],[970,90],[970,250],[180,150],[125,125],[320,50],[320,100],[234,60],[468,60],[728,90],[300,250],['fluid'],],'div-gpt-ad-omnisecu_com-medrectangle-1-0').addService(googletag.pubads()).setCollapseEmptyDiv(false);ezSetTargetingFromMap(ezslot_4,{'a':'1','iid1':'5008944426787590','eid':'5008944426787590','t':'134','d':'147239','t1':'134','pvc':'0','ap':'1110','sap':'1110','a':'|3|','as':'revenue','plat':'1','bra':'mod1','ic':'1','at':'mbf','adr':'399','ezosn':'4','reft':'n','refs':'30','ga':'2497208','gala':'','rid':'99998','pt':'4','al':'1004','compid':'0','tap':'omnisecu_com-medrectangle-1-5008944426787590','eb_br':'90c3c48d0172916d27c102ea4aa9d49c','eba':'1','ebss':[10017,10082,10061,10015,11304,11307],'asau':'3694313487','bv':'24','bvm':'0','bvr':'2','shp':'1','ftsn':'3','acptad':'1','br1':'300','br2':'140','ezoic':'1','nmau':'0','mau':'0','stl':[77,131,0,78,0,131,192,0,32,197,143,0],'deal1':[21,22,23,24,25,26,919,1794,774],'ax_ssid':'10082'});ezrpos[4]="4";ezslots.push("ezslot_4");
+				if(bvr != null){
+					if(typeof __ez_fad_fastslots['div-gpt-ad-omnisecu_com-medrectangle-1-0'] == 'function') {
+						__ez_fad_fastslots['div-gpt-ad-omnisecu_com-medrectangle-1-0']();
+					}
+				}
+				if(typeof ezSlotKVStore != 'undefined' && typeof ezSlotKVStore[did] != 'undefined') {
+					for (var name in ezSlotKVStore[did]) {
+						if (!ezSlotKVStore.hasOwnProperty(name)) {
+							ezSetSlotTargeting(did, name, ezSlotKVStore[did][name]);
+						}
+					}
+					ezSlotKVStore[did] = {};
+				}
+			});return "ezslot_4";};
+			__ez_fad_fastslots['div-gpt-ad-omnisecu_com-medrectangle-1-0'] = function(){__ez_fad_fastdiv.push('div-gpt-ad-omnisecu_com-medrectangle-1-0'); __ez_fad_fast('4',100,null);};
+			__ez_fad_viewslots['div-gpt-ad-omnisecu_com-medrectangle-1-0'] = function(){__ez_fad_fastdiv.push('div-gpt-ad-omnisecu_com-medrectangle-1-0'); __ez_fad_fast('4',240,null);};
+			__ez_fad_instaslots['div-gpt-ad-omnisecu_com-medrectangle-1-0'] = function(){__ez_fad_fastdiv.push('div-gpt-ad-omnisecu_com-medrectangle-1-0'); __ez_fad_fast('4',0,0);};__ez_fad_initslot['div-gpt-ad-omnisecu_com-box-1-0'] = function(bvr){
+				googletag.cmd.push(function() {
+				var did = 'div-gpt-ad-omnisecu_com-box-1-0';
+				ezslot_1 = googletag.defineSlot('/1254144,21902746844/omnisecu_com-box-1',[300,250],'div-gpt-ad-omnisecu_com-box-1-0').addService(googletag.pubads()).setCollapseEmptyDiv(false);ezSetTargetingFromMap(ezslot_1,{'a':'1','iid1':'3597626006761839','eid':'3597626006761839','t':'134','d':'147239','t1':'134','pvc':'0','ap':'1129','sap':'1129','a':'|253|','as':'revenue','plat':'1','bra':'mod1','ic':'1','at':'mbf','adr':'399','ezosn':'1','reft':'n','refs':'30','ga':'2497208','gala':'','rid':'99998','pt':'0','al':'1000','compid':'0','tap':'omnisecu_com-box-1-3597626006761839','eb_br':'90c3c48d0172916d27c102ea4aa9d49c','eba':'1','ebss':[10017,10082,10061,10015,11304,11307],'asau':'3694313487','bv':'12','bvm':'0','bvr':'2','shp':'2','ftsn':'3','acptad':'1','br1':'300','br2':'140','ezoic':'1','nmau':'0','mau':'0','stl':[75,168,0,34,0,168,132,20,71,30,192,31],'deal1':[21,22,23,24,25,26,27,28,760,815,817,899,919,1794,774],'ax_ssid':'10082'});ezrpos[1]="1";ezslots.push("ezslot_1");
+				if(bvr != null){
+					if(typeof __ez_fad_fastslots['div-gpt-ad-omnisecu_com-box-1-0'] == 'function') {
+						__ez_fad_fastslots['div-gpt-ad-omnisecu_com-box-1-0']();
+					}
+				}
+				if(typeof ezSlotKVStore != 'undefined' && typeof ezSlotKVStore[did] != 'undefined') {
+					for (var name in ezSlotKVStore[did]) {
+						if (!ezSlotKVStore.hasOwnProperty(name)) {
+							ezSetSlotTargeting(did, name, ezSlotKVStore[did][name]);
+						}
+					}
+					ezSlotKVStore[did] = {};
+				}
+			});return "ezslot_1";};
+			__ez_fad_fastslots['div-gpt-ad-omnisecu_com-box-1-0'] = function(){__ez_fad_fastdiv.push('div-gpt-ad-omnisecu_com-box-1-0'); __ez_fad_fast('1',100,null);};
+			__ez_fad_viewslots['div-gpt-ad-omnisecu_com-box-1-0'] = function(){__ez_fad_fastdiv.push('div-gpt-ad-omnisecu_com-box-1-0'); __ez_fad_fast('1',240,null);};
+			__ez_fad_instaslots['div-gpt-ad-omnisecu_com-box-1-0'] = function(){__ez_fad_fastdiv.push('div-gpt-ad-omnisecu_com-box-1-0'); __ez_fad_fast('1',0,0);};__ez_fad_initslot['div-gpt-ad-omnisecu_com-banner-2-0'] = function(bvr){
+				googletag.cmd.push(function() {
+				var did = 'div-gpt-ad-omnisecu_com-banner-2-0';
+				ezslot_3 = googletag.defineSlot('/1254144,21902746844/omnisecu_com-banner-2',[300,250],'div-gpt-ad-omnisecu_com-banner-2-0').addService(googletag.pubads()).setCollapseEmptyDiv(false);ezSetTargetingFromMap(ezslot_3,{'a':'1','iid1':'8784325062796376','eid':'8784325062796376','t':'134','d':'147239','t1':'134','pvc':'0','ap':'1157','sap':'1157','a':'|251|','as':'revenue','plat':'1','bra':'mod1','ic':'1','at':'mbf','adr':'399','ezosn':'3','reft':'tf','refs':'30','ga':'2497208','gala':'','rid':'99998','pt':'31','al':'1031','compid':'0','tap':'omnisecu_com-banner-2-8784325062796376','eb_br':'57914c3716312cb7e954090f0717ea25','eba':'1','ebss':[10017,10082,10061,10015,11304,11307],'asau':'3694313487','bv':'4','bvm':'0','bvr':'4','shp':'2','ftsn':'3','br1':'260','br2':'140','ezoic':'1','nmau':'0','mau':'0','stl':[83,193,0,4,0,193,24,192,26,156,187,77],'deal1':[20,21,22,23,24,25,26,27,28,29,30,760,761,813,815,816,817,818,899,919,1794,774],'ax_ssid':'10082'});ezrpos[3]="3";ezslots.push("ezslot_3");
+				if(bvr != null){
+					if(typeof __ez_fad_fastslots['div-gpt-ad-omnisecu_com-banner-2-0'] == 'function') {
+						__ez_fad_fastslots['div-gpt-ad-omnisecu_com-banner-2-0']();
+					}
+				}
+				if(typeof ezSlotKVStore != 'undefined' && typeof ezSlotKVStore[did] != 'undefined') {
+					for (var name in ezSlotKVStore[did]) {
+						if (!ezSlotKVStore.hasOwnProperty(name)) {
+							ezSetSlotTargeting(did, name, ezSlotKVStore[did][name]);
+						}
+					}
+					ezSlotKVStore[did] = {};
+				}
+			});return "ezslot_3";};
+			__ez_fad_fastslots['div-gpt-ad-omnisecu_com-banner-2-0'] = function(){__ez_fad_fastdiv.push('div-gpt-ad-omnisecu_com-banner-2-0'); __ez_fad_fast('3',90,null);};
+			__ez_fad_viewslots['div-gpt-ad-omnisecu_com-banner-2-0'] = function(){__ez_fad_fastdiv.push('div-gpt-ad-omnisecu_com-banner-2-0'); __ez_fad_fast('3',200,null);};
+			__ez_fad_instaslots['div-gpt-ad-omnisecu_com-banner-2-0'] = function(){__ez_fad_fastdiv.push('div-gpt-ad-omnisecu_com-banner-2-0'); __ez_fad_fast('3',0,0);};</script>
+<script type="text/ez-screx">(function(){function storageAvailable(type){var storage;try{storage=window[type];var x='__storage_test__';storage.setItem(x,x);storage.removeItem(x);return true;}
+catch(e){return e instanceof DOMException&&(e.code===22||e.code===1014||e.name==='QuotaExceededError'||e.name==='NS_ERROR_DOM_QUOTA_REACHED')&&(storage&&storage.length!==0);}}
+function remove_ama_config(){if(storageAvailable('localStorage')){localStorage.removeItem("google_ama_config");}}
+remove_ama_config()})()</script>
+<script data-ezscrex="false" data-cfasync="false">__ez.ssaf=[17,19,16];__ez.sswp=4;__ez.ssv=107263;__ez.sshsdef=true;</script>
+<script type="text/javascript">var ezoicTestActive = true</script>
+<script data-ezscrex="false" type="text/javascript" data-cfasync="false">var _ezaq = {"ad_cache_level":1,"ad_count_adjustment":1,"ad_lazyload_version":2,"ad_load_version":2,"ad_location_ids":"1,0,5,31,4","ad_transform_level":0,"adx_ad_count":5,"bidder_method":1,"bidder_version":1,"city":"","country":"GR","days_since_last_visit":-1,"display_ad_count":4,"domain_id":147239,"domain_test_group":20210302,"ds_adsize_opt_id":-1,"engaged_time_visit":0,"ezcache_level":2,"ezcache_skip_code":0,"form_factor_id":1,"framework_id":1,"has_bad_image":0,"has_bad_words":0,"iab_category":"","iab_category_0":"596","iab_category_1":"600","is_from_recommended_pages":false,"is_return_visitor":false,"is_sitespeed":1,"last_page_load":"","last_pageview_id":"","lt_cache_level":0,"max_ads":7,"metro_code":0,"optimization_version":1,"page_ad_positions":"1100,1107,1110,1129,1157","page_view_count":0,"page_view_id":"b7f1cbe5-54a1-4b18-79e2-9dd947d3b02f","position_selection_id":39,"postal_code":"","pv_event_count":0,"response_size_orig":35249,"response_time_orig":2,"serverid":"52.59.233.170:22092","state":"","sub_page_ad_positions":"1100,1107,1110,1129,1157","t_epoch":1634997712,"template_id":134,"time_on_site_visit":0,"url":"https://www.omnisecu.com/tcpip/broadcast-mac-address.php","user_id":0,"weather_precipitation":0,"weather_summary":"","weather_temperature":0,"word_count":879,"worst_bad_word_level":0};var _ezim_d = {"omnisecu_com-banner-2":{"adsense_stat_source_id":5,"adx_ad_count":5,"adx_stat_source_id":35,"full_id":"omnisecu_com-banner-2/2021-10-23/8784325062796376","height":"250","position_id":1157,"sub_position_id":1157,"width":"300"},"omnisecu_com-box-1":{"adsense_stat_source_id":5,"adx_ad_count":5,"adx_stat_source_id":35,"full_id":"omnisecu_com-box-1/2021-10-23/3597626006761839","height":"250","position_id":1129,"sub_position_id":1129,"width":"300"},"omnisecu_com-box-2":{"adsense_stat_source_id":5,"adx_ad_count":5,"adx_stat_source_id":35,"full_id":"omnisecu_com-box-2/2021-10-23/4858099226756426","height":"90","position_id":1107,"sub_position_id":1107,"width":"728"},"omnisecu_com-medrectangle-1":{"adsense_stat_source_id":5,"adx_ad_count":5,"adx_stat_source_id":35,"full_id":"omnisecu_com-medrectangle-1/2021-10-23/5008944426787590","height":"250","position_id":1110,"sub_position_id":1110,"width":"250"},"omnisecu_com-medrectangle-2":{"adsense_stat_source_id":5,"adx_ad_count":5,"adx_stat_source_id":35,"full_id":"omnisecu_com-medrectangle-2/2021-10-23/210196456812937","height":"90","position_id":1100,"sub_position_id":1100,"width":"970"}};var _ezat = {"domain_id":147239,"form_factor_id":1,"framework_id":1,"pageview_date":"2021-10-23","pageview_id":"b7f1cbe5-54a1-4b18-79e2-9dd947d3b02f","template_id":134,"url":"https://www.omnisecu.com/tcpip/broadcast-mac-address.php","visit_uuid":"a0da37a8-ca4b-47f7-662a-55980282a47c"};</script><script data-ezscrex="false" data-pagespeed-no-defer data-cfasync="false" type="text/javascript">__ez.queue.addFile('banger.js', '/porpoiseant/banger.js?cb=195-2&bv=80&v=55&PageSpeed=off', true, [], true, false, false, true);</script>
+<script data-ezscrex='false' data-cfasync='false' data-pagespeed-no-defer>__ez.vep=(function(){var pixels=[],pxURL="/detroitchicago/grapefruit.gif";function AddPixel(vID,pixelData){if(__ez.dot.isDefined(vID)&&__ez.dot.isValid(pixelData)){pixels.push({type:'video',video_impression_id:vID,domain_id:__ez.dot.getDID(),t_epoch:__ez.dot.getEpoch(0),data:__ez.dot.dataToStr(pixelData)});}}
+function Fire(){if(typeof document.visibilityState!=='undefined'&&document.visibilityState==="prerender"){return;}
+if(__ez.dot.isDefined(pixels)&&pixels.length>0){while(pixels.length>0){var j=5;if(j>pixels.length){j=pixels.length;}
+var pushPixels=pixels.splice(0,j);var pixelURL=__ez.dot.getURL(pxURL)+"?orig="+(__ez.template.isOrig===true?1:0)+"&v="+btoa(JSON.stringify(pushPixels));__ez.dot.Fire(pixelURL);}}
+pixels=[];}
+return{Add:AddPixel,Fire:Fire};})();</script><script data-ezscrex='false' data-cfasync='false' data-pagespeed-no-defer>__ez.pel=(function(){var pixels=[],pxURL="/porpoiseant/army.gif";function AddAndFirePixel(adSlot,pixelData){AddPixel(adSlot,pixelData,0,0,0,0,0);Fire();}
+function AddAndFireOrigPixel(adSlot,pixelData){AddPixel(adSlot,pixelData,0,0,0,0,0,true);Fire();}
+function GetCurrentPixels(){return pixels;}
+function AddPixel(adSlot,pixelData,revenue,est_revenue,bid_floor_filled,bid_floor_prev,stat_source_id,isOrig){if(!__ez.dot.isDefined(adSlot)||__ez.dot.isAnyDefined(adSlot.getSlotElementId,adSlot.ElementId)==false){return;}
+var ad_position_id=parseInt(__ez.dot.getTargeting(adSlot,'ap'));var impId=__ez.dot.getSlotIID(adSlot),adUnit=__ez.dot.getAdUnit(adSlot,isOrig);var compId=parseInt(__ez.dot.getTargeting(adSlot,"compid"));var lineItemId=0;var creativeId=0;var ezimData=getEzimData(adSlot);if(typeof ezimData=='object'){if(ezimData.creative_id!==undefined){creativeId=ezimData.creative_id;}
+if(ezimData.line_item_id!==undefined){lineItemId=ezimData.line_item_id;}}
+if(__ez.dot.isDefined(impId,adUnit)&&__ez.dot.isValid(pixelData)){pixels.push({type:"impression",impression_id:impId,domain_id:__ez.dot.getDID(),unit:adUnit,t_epoch:__ez.dot.getEpoch(0),revenue:revenue,est_revenue:est_revenue,ad_position:ad_position_id,ad_size:"",bid_floor_filled:bid_floor_filled,bid_floor_prev:bid_floor_prev,stat_source_id:stat_source_id,country_code:__ez.dot.getCC(),pageview_id:__ez.dot.getPageviewId(),comp_id:compId,line_item_id:lineItemId,creative_id:creativeId,data:__ez.dot.dataToStr(pixelData),is_orig:isOrig||__ez.template.isOrig,});}}
+function AddPixelById(impFullId,pixelData,isOrig){var vals=impFullId.split('/');if(__ez.dot.isDefined(impFullId)&&vals.length===3&&__ez.dot.isValid(pixelData)){var adUnit=vals[0],impId=vals[2];pixels.push({type:"impression",impression_id:impId,domain_id:__ez.dot.getDID(),unit:adUnit,t_epoch:__ez.dot.getEpoch(0),pageview_id:__ez.dot.getPageviewId(),data:__ez.dot.dataToStr(pixelData),is_orig:isOrig||__ez.template.isOrig});}}
+function Fire(){if(typeof document.visibilityState!=='undefined'&&document.visibilityState==="prerender")return;if(__ez.dot.isDefined(pixels)&&pixels.length>0){var allPixels=[pixels.filter(function(pixel){return pixel.is_orig}),pixels.filter(function(pixel){return!pixel.is_orig})];allPixels.forEach(function(pixels){while(pixels.length>0){var isOrig=pixels[0].is_orig||false;var j=5;if(j>pixels.length){j=pixels.length;}
+var pushPixels=pixels.splice(0,j);var pixelURL=__ez.dot.getURL(pxURL)+"?orig="+(isOrig===true?1:0)+"&sts="+btoa(JSON.stringify(pushPixels));if(typeof window.isAmp!=='undefined'&&isAmp&&typeof window._ezaq!=='undefined'&&_ezaq.hasOwnProperty("domain_id")){pixelURL+="&visit_uuid="+_ezaq['visit_uuid'];}
+__ez.dot.Fire(pixelURL);}})}
+pixels=[];}
+function getEzimData(adSlot){if(typeof _ezim_d=="undefined"){return false}
+var adUnitName=__ez.dot.getAdUnitPath(adSlot).split('/').pop();if(typeof _ezim_d==='object'&&_ezim_d.hasOwnProperty(adUnitName)){return _ezim_d[adUnitName];}
+for(var ezimKey in _ezim_d){if(ezimKey.split('/').pop()===adUnitName){return _ezim_d[ezimKey];}}
+return false;}
+return{Add:AddPixel,AddAndFire:AddAndFirePixel,AddAndFireOrig:AddAndFireOrigPixel,AddById:AddPixelById,Fire:Fire,GetPixels:GetCurrentPixels,};})();</script><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/>
+<link rel="preconnect" href="//www.googletagmanager.com" crossorigin=""/>
+<link rel="preconnect" href="//www.facebook.com" crossorigin=""/>
+<link rel="preconnect" href="//cse.google.com" crossorigin=""/>
+<link rel="preconnect" href="//code.jquery.com" crossorigin=""/>
+<link rel="preconnect" href="//cdnjs.cloudflare.com" crossorigin=""/>
+<link rel="preconnect" href="//www.google.com" crossorigin=""/>
+<link rel="preconnect" href="//go.ezoic.net" crossorigin=""/>
+<style class="ezcritcss">:root{--blue:#007bff;--indigo:#6610f2;--purple:#6f42c1;--pink:#e83e8c;--red:#dc3545;--orange:#fd7e14;--yellow:#ffc107;--green:#28a745;--teal:#20c997;--cyan:#17a2b8;--white:#fff;--gray:#6c757d;--gray-dark:#343a40;--primary:#007bff;--secondary:#6c757d;--success:#28a745;--info:#17a2b8;--warning:#ffc107;--danger:#dc3545;--light:#f8f9fa;--dark:#343a40;--breakpoint-xs:0;--breakpoint-sm:576px;--breakpoint-md:768px;--breakpoint-lg:992px;--breakpoint-xl:1200px;--font-family-sans-serif:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";--font-family-monospace:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}*,::after,::before{box-sizing:border-box}html{font-family:sans-serif;line-height:1.15;-webkit-text-size-adjust:100%}article,aside,header,nav{display:block}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;text-align:left;background-color:#fff}h1,h5{margin-top:0;margin-bottom:.5rem}p{margin-top:0;margin-bottom:1rem}ul{margin-top:0;margin-bottom:1rem}b{font-weight:bolder}a{color:#007bff;text-decoration:none;background-color:transparent}img{vertical-align:middle;border-style:none}svg{overflow:hidden;vertical-align:middle}table{border-collapse:collapse}label{display:inline-block;margin-bottom:.5rem}button{border-radius:0}button,input,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,input{overflow:visible}button{text-transform:none}[type=button],[type=submit],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{padding:0;border-style:none}textarea{overflow:auto;resize:vertical}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}h1,h5{margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:2.5rem}h5{font-size:1.25rem}.img-fluid{max-width:100%;height:auto}.container{width:100%;padding-right:15px;padding-left:15px;margin-right:auto;margin-left:auto}@media (min-width:576px){.container{max-width:540px}}@media (min-width:768px){.container{max-width:720px}}@media (min-width:992px){.container{max-width:960px}}@media (min-width:1200px){.container{max-width:1140px}}.container-fluid{width:100%;padding-right:15px;padding-left:15px;margin-right:auto;margin-left:auto}.row{display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap;margin-right:-15px;margin-left:-15px}.col-lg-3,.col-lg-4,.col-lg-5,.col-md-12,.col-md-3,.col-md-9,.col-sm-12{position:relative;width:100%;padding-right:15px;padding-left:15px}@media (min-width:576px){.col-sm-12{-ms-flex:0 0 100%;flex:0 0 100%;max-width:100%}}@media (min-width:768px){.col-md-3{-ms-flex:0 0 25%;flex:0 0 25%;max-width:25%}.col-md-9{-ms-flex:0 0 75%;flex:0 0 75%;max-width:75%}.col-md-12{-ms-flex:0 0 100%;flex:0 0 100%;max-width:100%}}@media (min-width:992px){.col-lg-3{-ms-flex:0 0 25%;flex:0 0 25%;max-width:25%}.col-lg-4{-ms-flex:0 0 33.333333%;flex:0 0 33.333333%;max-width:33.333333%}.col-lg-5{-ms-flex:0 0 41.666667%;flex:0 0 41.666667%;max-width:41.666667%}}.form-control{display:block;width:100%;height:calc(1.5em + .75rem + 2px);padding:.375rem .75rem;font-size:1rem;font-weight:400;line-height:1.5;color:#495057;background-color:#fff;background-clip:padding-box;border:1px solid #ced4da;border-radius:.25rem}.form-control::-ms-expand{background-color:transparent;border:0}.form-control::-webkit-input-placeholder{color:#6c757d;opacity:1}.form-control::-moz-placeholder{color:#6c757d;opacity:1}.form-control:-ms-input-placeholder{color:#6c757d;opacity:1}.form-control::-ms-input-placeholder{color:#6c757d;opacity:1}.col-form-label{padding-top:calc(.375rem + 1px);padding-bottom:calc(.375rem + 1px);margin-bottom:0;font-size:inherit;line-height:1.5}textarea.form-control{height:auto}.form-group{margin-bottom:1rem}.btn{display:inline-block;font-weight:400;color:#212529;text-align:center;vertical-align:middle;background-color:transparent;border:1px solid transparent;padding:.375rem .75rem;font-size:1rem;line-height:1.5;border-radius:.25rem}.btn-primary{color:#fff;background-color:#007bff;border-color:#007bff}.btn-secondary{color:#fff;background-color:#6c757d;border-color:#6c757d}.fade:not(.show){opacity:0}.collapse:not(.show){display:none}.btn-group{position:relative;display:-ms-inline-flexbox;display:inline-flex;vertical-align:middle}.btn-group>.btn{position:relative;-ms-flex:1 1 auto;flex:1 1 auto}.navbar{position:relative;display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap;-ms-flex-align:center;align-items:center;-ms-flex-pack:justify;justify-content:space-between;padding:.5rem 1rem}.navbar-nav{display:-ms-flexbox;display:flex;-ms-flex-direction:column;flex-direction:column;padding-left:0;margin-bottom:0;list-style:none}.navbar-collapse{-ms-flex-preferred-size:100%;flex-basis:100%;-ms-flex-positive:1;flex-grow:1;-ms-flex-align:center;align-items:center}.navbar-toggler{padding:.25rem .75rem;font-size:1.25rem;line-height:1;background-color:transparent;border:1px solid transparent;border-radius:.25rem}.navbar-toggler-icon{display:inline-block;width:1.5em;height:1.5em;vertical-align:middle;content:"";background:no-repeat center center;background-size:100% 100%}@media (min-width:992px){.navbar-expand-lg{-ms-flex-flow:row nowrap;flex-flow:row nowrap;-ms-flex-pack:start;justify-content:flex-start}.navbar-expand-lg .navbar-nav{-ms-flex-direction:row;flex-direction:row}.navbar-expand-lg .navbar-collapse{display:-ms-flexbox!important;display:flex!important;-ms-flex-preferred-size:auto;flex-basis:auto}.navbar-expand-lg .navbar-toggler{display:none}}.navbar-light .navbar-toggler{color:rgba(0,0,0,.5);border-color:rgba(0,0,0,.1)}.card{position:relative;display:-ms-flexbox;display:flex;-ms-flex-direction:column;flex-direction:column;min-width:0;word-wrap:break-word;background-color:#fff;background-clip:border-box;border:1px solid rgba(0,0,0,.125);border-radius:.25rem}.card-body{-ms-flex:1 1 auto;flex:1 1 auto;padding:1.25rem}.card-title{margin-bottom:.75rem}.close{float:right;font-size:1.5rem;font-weight:700;line-height:1;color:#000;text-shadow:0 1px 0 #fff;opacity:.5}button.close{padding:0;background-color:transparent;border:0;-webkit-appearance:none;-moz-appearance:none;appearance:none}.modal{position:fixed;top:0;left:0;z-index:1050;display:none;width:100%;height:100%;overflow:hidden;outline:0}.modal-dialog{position:relative;width:auto;margin:.5rem}.modal.fade .modal-dialog{-webkit-transform:translate(0,-50px);transform:translate(0,-50px)}.modal-content{position:relative;display:-ms-flexbox;display:flex;-ms-flex-direction:column;flex-direction:column;width:100%;background-color:#fff;background-clip:padding-box;border:1px solid rgba(0,0,0,.2);border-radius:.3rem;outline:0}.modal-header{display:-ms-flexbox;display:flex;-ms-flex-align:start;align-items:flex-start;-ms-flex-pack:justify;justify-content:space-between;padding:1rem 1rem;border-bottom:1px solid #dee2e6;border-top-left-radius:.3rem;border-top-right-radius:.3rem}.modal-header .close{padding:1rem 1rem;margin:-1rem -1rem -1rem auto}.modal-title{margin-bottom:0;line-height:1.5}.modal-body{position:relative;-ms-flex:1 1 auto;flex:1 1 auto;padding:1rem}.modal-footer{display:-ms-flexbox;display:flex;-ms-flex-align:center;align-items:center;-ms-flex-pack:end;justify-content:flex-end;padding:1rem;border-top:1px solid #dee2e6;border-bottom-right-radius:.3rem;border-bottom-left-radius:.3rem}.modal-footer>:not(:first-child){margin-left:.25rem}.modal-footer>:not(:last-child){margin-right:.25rem}@media (min-width:576px){.modal-dialog{max-width:500px;margin:1.75rem auto}}.d-none{display:none!important}@media (min-width:576px){.d-sm-none{display:none!important}}@media (min-width:768px){.d-md-none{display:none!important}}@media (min-width:992px){.d-lg-block{display:block!important}}.fixed-top{position:fixed;top:0;right:0;left:0;z-index:1030}.sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.ml-auto{margin-left:auto!important}.text-center{text-align:center!important}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}body{font-family:Rubik,Roboto,"PT Serif","Segoe UI",Helvetica,sans-serif;margin:0 10px}.btn-group{position:relative;display:-ms-inline-flexbox;display:inline-flex;vertical-align:middle;height:42px}.btn{display:inline-block;font-weight:400;color:#212529;text-align:center;vertical-align:middle;background-color:transparent;border:1px solid transparent;border-top-color:transparent;border-right-color:transparent;border-bottom-color:transparent;border-left-color:transparent;padding:.375rem .75rem;font-size:1rem;line-height:1.5;border-radius:.25rem;border-top-right-radius:.25rem;border-bottom-right-radius:.25rem;font-family:Roboto;font-weight:700;font-size:1rem}.navbar-toggler{background-color:#fff}.menu-area{background:#fff}.mainmenu a,.mainmenu ul li a{color:#333;font-size:16px;text-transform:capitalize;padding:10px 15px;font-family:'Roboto',sans-serif;display:block!important;background-color:#fff}.mainmenu .active a{color:#fff;outline:0;text-decoration-line:blink;background-color:#df4800!important;border-radius:4px}.mainmenu{background:0 0;border:0 solid;margin:0;padding:0;min-height:95px;width:100%}.btn-primary{color:#fff;background-color:#df4800;border-color:#df4800}.fixed-top{position:fixed;top:0;right:0;left:0;z-index:1030;height:100px}.pt-100{padding-top:12%}@media (min-width:100px) and (max-width:149.98px){.pt-100{padding-top:100%!important}}@media (min-width:150px) and (max-width:199.98px){.pt-100{padding-top:100%!important}}@media (min-width:200px) and (max-width:299.98px){.pt-100{padding-top:100%!important}}@media (min-width:300px) and (max-width:329.98px){.pt-100{padding-top:100%!important}.fixed-top{height:200px}}@media (min-width:330px) and (max-width:349.98px){.pt-100{padding-top:80%!important}.fixed-top{height:200px}}@media (min-width:350px) and (max-width:399.98px){.pt-100{padding-top:70%!important}.fixed-top{height:150px}}@media (min-width:400px) and (max-width:499.98px){.pt-100{padding-top:50%!important}}@media (min-width:500px) and (max-width:575.98px){.pt-100{padding-top:40%!important}}@media (min-width:576px) and (max-width:767.98px){.pt-100{padding-top:30%!important}}@media (min-width:768px) and (max-width:991.98px){.pt-100{padding-top:20%}}@media (min-width:992px) and (max-width:1099.98px){.pt-100{padding-top:17%}}@media (min-width:1100px) and (max-width:1299.98px){.pt-100{padding-top:15%}}.smGlobalBtn{display:inline-block;position:relative;width:40px;height:40px;box-shadow:0 2px 2px #999;padding:0;text-decoration:none;text-align:center;color:#fff;font-size:25px;font-weight:400;line-height:1.7em;border-radius:20px;-moz-border-radius:25px;-webkit-border-radius:25px}.facebookBtn{background:#4060a5}.facebookBtn:before{font-family:"FontAwesome";content:"\f09a"}.twitterBtn{background:#00abe3}.twitterBtn:before{font-family:"FontAwesome";content:"\f099"}.redditBtn{background:#f30}.redditBtn:before{font-family:"FontAwesome";content:"\f1a1"}.linkedinBtn{background:#0094bc}.linkedinBtn:before{font-family:"FontAwesome";content:"\f0e1"}.pinterestBtn{background:#cb2027}.pinterestBtn:before{font-family:"FontAwesome";content:"\f0d2"}.whatsappBtn{background:#14940b}.whatsappBtn:before{font-family:"FontAwesome";content:"\f232"}.emailBtn{background:#e65a4d}.emailBtn:before{font-family:"FontAwesome";content:"\f003"}.pt-20{padding-top:20px}a{text-decoration:none;color:#333}.para-justify{text-align:justify}.para-center{text-align:center}.navbar-nav{display:-ms-flexbox;display:flex;-ms-flex-direction:column;flex-direction:column;padding-left:0;margin-bottom:0;list-style:none;font-weight:600}h1{font-size:1.6rem;padding-top:6px;text-align:left!important}.tutorial-heading-area{background-color:#df4800;color:#fff;padding:6px!important;margin-left:0;font-size:1rem}.breadcrumbs{margin-bottom:10px;border:2px solid #df4800;border-radius:4px;padding:3px 0;margin:5px 15px}.breadcrumbs a{font-size:14px;font-weight:700;text-decoration:none}.btn-primary{color:#fff;background-color:#df4800!important;border-color:#fff}.social-media-like{padding-bottom:25px!important;font-size:25px!important}.social-media-share{padding-bottom:20px!important}.social-media-like-title{color:#df4800;font-size:25px;font-family:'Caveat',cursive!important}.social-media-share-title{color:#df4800;font-size:25px;font-family:'Caveat',cursive!important}.custom-search-title{color:#df4800;font-size:25px;font-family:'Caveat',cursive!important}.card{position:relative;display:-ms-flexbox;display:flex;-ms-flex-direction:column;flex-direction:column;min-width:0;word-wrap:break-word;background-color:#fff;background-clip:border-box;border:1px solid rgba(0,0,0,.125);border-radius:.25rem;margin:1%}.tutorial-heading-bottom-margin{margin-bottom:15px}.inside-link{font-weight:700!important;color:#df4800!important}textarea{width:98%}#header-below{display:inline}#ul_top_menus li{display:inline}.background-color-header{background-color:#df4800;padding:6px!important;margin-top:1px!important}.heading-padd{color:#fff}.a_top_hypers{color:#fff;font-size:14px;font-weight:600}#header-below li{margin:0 12px}</style>
+<script data-ezscrex="false" data-cfasync="false" data-pagespeed-no-defer="" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+      <title>Broadcast MAC Address - ff:ff:ff:ff:ff:ff</title>
+      
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>   
+      <meta name="description" content="This tutorial lesson explains about broadcast MAC address - ff:ff:ff:ff:ff:ff"/>
+      <meta name="keywords" content=""/>
+	  <script src="https://www.omnisecu.com/ezossp/https/www.google.com/recaptcha/api.js?screx=1&amp;sxcb=3a" async="" defer="" type="text/ez-screx"></script>
+ 	  <link rel="stylesheet" type="text/css" href="https://www.omnisecu.com/css/bootstrap.min.css?ff=1&amp;wps=false"/>
+      <link rel="preload" type="text/css" href="https://www.omnisecu.com/css/font-awesome-4.7.0/css/font-awesome.css" as="style" onload="this.onload=null;this.rel=&#39;stylesheet&#39;"/><noscript><link rel="stylesheet" type="text/css" href="https://www.omnisecu.com/css/font-awesome-4.7.0/css/font-awesome.css?ff=1&amp;wps=false"/></noscript>
+	  <link rel="preload" type="text/css" href="https://www.omnisecu.com/css/font-awesome-4.7.0/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel=&#39;stylesheet&#39;"/><noscript><link rel="stylesheet" type="text/css" href="https://www.omnisecu.com/css/font-awesome-4.7.0/css/font-awesome.min.css?ff=1&amp;wps=false"/></noscript>
+      <link rel="preload" type="text/css" href="https://www.omnisecu.com/css/style.css" as="style" onload="this.onload=null;this.rel=&#39;stylesheet&#39;"/><noscript><link rel="stylesheet" type="text/css" href="https://www.omnisecu.com/css/style.css?ff=1&amp;wps=false"/></noscript>
+      <link href="https://fonts.googleapis.com/css?family=Rubik&amp;display=swap" rel="preload" as="style" onload="this.onload=null;this.rel=&#39;stylesheet&#39;"/><noscript><link href="https://fonts.googleapis.com/css?family=Rubik&amp;display=swap" rel="stylesheet"/></noscript>
+      <link href="https://fonts.googleapis.com/css?family=Roboto&amp;display=swap" rel="preload" as="style" onload="this.onload=null;this.rel=&#39;stylesheet&#39;"/><noscript><link href="https://fonts.googleapis.com/css?family=Roboto&amp;display=swap" rel="stylesheet"/></noscript>
+      <link href="https://fonts.googleapis.com/css?family=PT+Serif&amp;display=swap" rel="preload" as="style" onload="this.onload=null;this.rel=&#39;stylesheet&#39;"/><noscript><link href="https://fonts.googleapis.com/css?family=PT+Serif&amp;display=swap" rel="stylesheet"/></noscript>
+	  
+	    <!-- Global site tag (gtag.js) - Google Analytics -->
+		<script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-40995384-1"></script>
+		<script>
+  		window.dataLayer = window.dataLayer || [];
+  		function gtag(){dataLayer.push(arguments);}
+  		gtag('js', new Date());
+  		gtag('config', 'UA-40995384-1');
+	   </script>
+	   
+	   	<!-- Global site tag (gtag.js) - Google Analytics -->
+		<script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-40995384-2"></script>
+		<script>
+  		window.dataLayer = window.dataLayer || [];
+  		function gtag(){dataLayer.push(arguments);}
+  		gtag('js', new Date());
+		gtag('config', 'UA-40995384-2');
+	    </script>
+      	<!-- Global site tag (gtag.js) - Google Analytics -->
+		<script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-40995384-3"></script>
+		<script>
+		 window.dataLayer = window.dataLayer || [];
+		 function gtag(){dataLayer.push(arguments);}
+		 gtag('js', new Date());
+         gtag('config', 'UA-40995384-3');
+		</script>
+	   <!-- Global site tag (gtag.js) - Google Analytics -->
+		<script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-40995384-4"></script>
+		<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+        gtag('config', 'UA-40995384-4');
+		</script>
+   <style>.ezoic-ad.box-2107 { display:block !important;float:none !important;line-height:0px;margin-bottom:10px !important;margin-left:0px !important;margin-right:0px !important;margin-top:10px !important;min-height:90px;min-width:728px;padding:0;text-align:center !important; }
+.ezoic-ad.box-1129 { display:block !important;float:none;line-height:0px;margin-bottom:10px !important;margin-left:0px !important;margin-right:0px !important;margin-top:10px !important;min-height:250px;min-width:300px;padding:0;text-align:center !important; }
+.ezoic-ad.banner-2157 { display:block !important;float:none;line-height:0px;margin-bottom:15px !important;margin-left:0px !important;margin-right:0px !important;margin-top:15px !important;min-height:250px;min-width:300px;padding:0;text-align:center !important; }
+.ezoic-ad.medrectangle-1110 { display:block !important;float:none !important;line-height:0px;margin-bottom:10px !important;margin-left:0px !important;margin-right:0px !important;margin-top:10px !important;min-height:250px;min-width:970px;padding:0;text-align:center !important; }
+.ezoic-ad.medrectangle-2100 { display:inline-block;float:none;line-height:0px;min-height:90px;min-width:970px;padding:0; }
+.ezoic-ad{display:inline-block;border:0px;}.ezoic-ad>div>iframe{margin:0px!important;padding:0px!important;}
+.adtester-container-124,.adtester-container-132,.adtester-container-149,.adtester-container-133,.adtester-container-143,.adtester-container-114,.adtester-container-116,.adtester-container-123,.adtester-container-108,.adtester-container-151,.adtester-container-137,.adtester-container-113,.adtester-container-152,.adtester-container-154,.adtester-container-145,.adtester-container-111,.adtester-container-142,.adtester-container-126,.adtester-container-148,.adtester-container-130,.adtester-container-155,.adtester-container-131,.adtester-container-117,.adtester-container-141,.adtester-container-115,.adtester-container-136,.adtester-container-144,.adtester-container-122,.adtester-container-118,.adtester-container-120,.adtester-container-121,.adtester-container-119,.adtester-container-135,.adtester-container-140,.adtester-container-112,.adtester-container-125,.adtester-container-150,.adtester-container-128,.adtester-container-139,.adtester-container-147,.adtester-container-153,.adtester-container-156,.adtester-container-134,.adtester-container-138,.adtester-container-146{display:none!important}
+.ezmob-footer{position:fixed;left:0;bottom:0;width:100%;background:#fff;z-index:100000;line-height:0}.ezmob-footer-desktop{background-color:rgba(255,255,255,.8);border-top:1px solid #d3d3d3;padding-top:5px}.ezmob-footer-close{cursor:pointer;color:#b2b2b2;border:1px solid #b2b2b2;border-radius:20px;background:#fff;line-height:20px;display:inline-block;font-size:20px;font-family:arial,sans-serif;padding:0 5px;position:absolute;top:5px;right:5px;height:24px;width:21px;text-align:center}body {
+				padding-bottom: 100px !important;
+				height: auto;
+			}
+			.ezmob-footer-close-mobile {
+			display:none;
+		}
+		
+
+		@media (min-width: 900px) {
+			.ez-sticky {
+				position: sticky;
+				position: -webkit-sticky;
+				top: 80px;
+				z-index:10;
+			}
+		}
+	</style><link rel='canonical' href='https://www.omnisecu.com/tcpip/broadcast-mac-address.php' />
+<script type="text/javascript">
+			 (adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=1;var __ez_conestreq=true;</script>
+<script type="text/javascript">var ezouid = "1";</script><base href="https://www.omnisecu.com/tcpip/broadcast-mac-address.php"><script type='text/javascript'>
+var ezoTemplate = 'pub_site';
+if(typeof ezouid == 'undefined')
+{
+    var ezouid = 'none';
+}
+var ezoFormfactor = '1';
+var ezo_elements_to_check = Array();
+</script><!-- START EZHEAD -->
+<script data-ezscrex="false" type='text/javascript'>
+var soc_app_id = '0';
+var did = 147239;
+var ezdomain = 'omnisecu.com';
+var ezoicSearchable = 1;
+</script>
+<!--{jquery}-->
+<!-- END EZHEAD -->
+<script data-ezscrex='false' data-pagespeed-no-defer data-cfasync='false'>
+function create_ezolpl(pvID, rv) {
+    var d = new Date();
+    d.setTime(d.getTime() + (365*24*60*60*1000));
+    var expires = "expires="+d.toUTCString();
+    __ez.ck.setByCat("ezux_lpl_147239=" + new Date().getTime() + "|" + pvID + "|" + rv + "; " + expires, 3);
+}
+function attach_ezolpl(pvID, rv) {
+    if (document.readyState === "complete") {
+        create_ezolpl(pvID, rv);
+    }
+    if(window.attachEvent) {
+        window.attachEvent("onload", create_ezolpl, pvID, rv);
+    } else {
+        if(window.onload) {
+            var curronload = window.onload;
+            var newonload = function(evt) {
+                curronload(evt);
+                create_ezolpl(pvID, rv);
+            };
+            window.onload = newonload;
+        } else {
+            window.onload = create_ezolpl.bind(null, pvID, rv);
+        }
+    }
+}
+
+__ez.queue.addFunc("attach_ezolpl", "attach_ezolpl", ["b7f1cbe5-54a1-4b18-79e2-9dd947d3b02f", "false"], false, ['/detroitchicago/boise.js'], true, false, false, false);
+</script>
+<script type="text/javascript">__ez.queue.addFile('/detroitchicago/cmbv2.js', '/detroitchicago/cmbv2.js?gcb=195-2&cb=04-1y02-5y06-12y07-1y19-5y0b-5y0d-14y13-3y17-4y1a-2y1b-1y1e-2y1d-5y1f-3y32-22y55-21y59-19&cmbcb=20&sj=x04x02x06x07x19x0bx0dx13x17x1ax1bx1ex1dx1fx32x55x59', true, [], true, false, true, false);</script>
+<script type="text/javascript" defer>__ez.queue.addFile('/detroitchicago/cmbdv2.js', '/detroitchicago/cmbdv2.js?gcb=195-2&cb=03-5y0c-5y18-4y33-22y56-21y5a-19&cmbcb=20&sj=x03x0cx18x33x56x5a', true, ['/detroitchicago/cmbv2.js'], true, false, true, false);</script><script type="text/javascript">var cmpIsOn = true;</script></head>
+   <body>
+      <div id="menu_area" class="menu-area fixed-top">
+         <header>
+            <nav class="navbar navbar-light navbar-expand-lg mainmenu">
+               <a href="https://www.omnisecu.com/"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22207%22%20height%3D%2253%22%3E%3C%2Fsvg%3E" alt="logo" ezimgfmt="rs rscb3 src ng ngcb3" class="ezlazyload" data-ezsrc="https://www.omnisecu.com/images/omnisecu-logo.png"/></a>
+               <div class="btn-group btn-group-primary">
+                <button class="btn btn-primary" type="button" onclick="window.location.href = &#39;https://www.omnisecu.com/browse-tutorials.php&#39;;">Tutorials</button>  
+               </div>
+               <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+               <span class="navbar-toggler-icon"></span>
+               </button>
+               <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                  <ul class="navbar-nav ml-auto">
+                     <li class="active"><a href="https://www.omnisecu.com/index.php"> Home <span class="sr-only">(current)</span></a></li>
+                     <li><a href="https://www.omnisecu.com/about.php">About</a></li>
+                     <li><a href="https://www.omnisecu.com/support.php">Support Us</a></li>
+                     <li><a href="https://www.omnisecu.com/blog/index.php">Blog</a></li>
+                     <li><a href="https://www.omnisecu.com/sitemap.php">Sitemap</a></li>
+                     <li><a href="https://www.omnisecu.com/contact.php">Contact us</a></li>
+                  </ul>
+               </div>
+            </nav>
+            <div id="header-below">
+    <ul id="ul_top_menus" class="background-color-header text-center">
+      <li class="heading-padd"><a href="https://www.omnisecu.com/basic-networking/index.php" class="a_top_hypers"> Basic Networking </a></li>
+        <li class="heading-padd"><a href="https://www.omnisecu.com/tcpip/index.php" class="a_top_hypers"> TCP/IP </a></li>
+        <li class="heading-padd"><a href="https://www.omnisecu.com/tcpip/ipv6/index.php" class="a_top_hypers"> IPv6 </a></li>
+        <li class="heading-padd"><a href="https://www.omnisecu.com/cisco-certified-network-associate-ccna/index.php" class="a_top_hypers"> CCNA </a></li>
+        <li class="heading-padd"><a href="https://www.omnisecu.com/ccna-security/index.php" class="a_top_hypers"> CCNA Security </a></li>
+        <li class="heading-padd"><a href="https://www.omnisecu.com/security/index.php" class="a_top_hypers"> Network Security </a></li>
+        <li class="heading-padd"><a href="https://www.omnisecu.com/windows-2003/index.php" class="a_top_hypers"> Windows 2003 </a></li>
+        <li class="heading-padd"><a href="https://www.omnisecu.com/windows-2008/index.php" class="a_top_hypers"> Windows 2008 </a></li>
+        <li class="heading-padd"><a href="https://www.omnisecu.com/gnu-linux/index.php" class="a_top_hypers"> GNU/Linux</a></li>
+        <li class="heading-padd"><a href="https://www.omnisecu.com/excel/index.php" class="a_top_hypers"> MS Excel</a></li>
+    </ul>
+</div>
+         </header>
+      </div>
+
+<script type="text/ez-screx">
+    function bookMarkSubmit(clicked_id)
+    {
+    var currentURL = window.location.href;
+    var currentTitle = document.title;
+    
+    if ((clicked_id == "facebook-top") || (clicked_id == "facebook-bottom"))
+    {
+    sharewindow = window.open(encodeURI("http://www.facebook.com/share.php?u=" + currentURL + "&title=" + currentTitle));
+    sharewindow.focus();
+    }
+     else if ((clicked_id == "twitter-top") || (clicked_id == "twitter-bottom"))
+    {
+    sharewindow = window.open(encodeURI("https://twitter.com/intent/tweet?url=" + currentURL + "&text=" + currentTitle));
+    sharewindow.focus();
+    }
+    else if ((clicked_id == "linkedin-top") || (clicked_id == "linkedin-bottom"))
+    {
+    sharewindow = window.open(encodeURI("http://www.linkedin.com/shareArticle?mini=true&url=" + currentURL + "&title=" + currentTitle));
+    sharewindow.focus();
+    }
+    else if ((clicked_id == "reddit-top") || (clicked_id == "reddit-bottom"))
+    {
+    sharewindow = window.open(encodeURI("http://www.reddit.com/submit?url=" + currentURL + "&title=" + currentTitle));
+    sharewindow.focus();
+     }
+    else if ((clicked_id == "pinterest-top") || (clicked_id == "pinterest-bottom"))
+    {
+    sharewindow = window.open(encodeURI("http://pinterest.com/pin/create/bookmarklet/?url=" + currentURL + "&is_video=false&description=" + currentTitle));
+    sharewindow.focus();
+    }
+    else if ((clicked_id == "whatsapp-top") || (clicked_id == "whatsapp-bottom"))
+    {
+    sharewindow = window.open(encodeURI("https://web.whatsapp.com/send?text=" + currentURL));
+    sharewindow.focus();
+    }
+    else if ((clicked_id == "email-top") || (clicked_id == "email-bottom"))
+    {
+    sharewindow = window.open(encodeURI("mailto:?subject="+ currentTitle + "&body=" + "Found an amazing website for learning Networking, System administration and Network Security. Visit http://www.omnisecu.com for more details." ));
+    this.focus();
+    sharewindow.close();
+    }
+    }
+</script>
+
+      <div class="container pt-100">
+         <div class="row">
+            <div class="col-md-12 col-lg-3 col-sm-12 d-none d-sm-none d-md-none d-lg-block">
+               <div class="card social-media-like">
+                  <div class="card-body text-center">
+                     <h5 class="card-title social-media-like-title"><b>Like us on</b></h5>
+            <a class="facebookBtn smGlobalBtn" href="https://www.facebook.com/omnisecu" target="_blank"></a>
+                  </div>
+               </div>
+            </div>
+            <div class="col-md-12 col-lg-5 col-sm-12 d-none d-sm-none d-md-none d-lg-block">
+               <div class="card social-media-share">
+                  <div class="card-body text-center">
+                     <h5 class="card-title social-media-share-title"><b>Share on</b></h5>
+                     <div id="social-header">
+        <a id="facebook-top" class="facebookBtn smGlobalBtn" href="#" onclick="bookMarkSubmit(this.id)"></a>
+        <a id="twitter-top" class="twitterBtn smGlobalBtn" href="#" onclick="bookMarkSubmit(this.id)"></a>
+        <a id="linkedin-top" class="linkedinBtn smGlobalBtn" href="#" onclick="bookMarkSubmit(this.id)"></a>
+        <a id="reddit-top" class="redditBtn smGlobalBtn" href="#" onclick="bookMarkSubmit(this.id)"></a>
+        <a id="pinterest-top" class="pinterestBtn smGlobalBtn" href="#" onclick="bookMarkSubmit(this.id)"></a>
+        <a id="whatsapp-top" class="whatsappBtn smGlobalBtn" href="#" onclick="bookMarkSubmit(this.id)"></a>
+        <a id="email-top" class="emailBtn smGlobalBtn" href="#" onclick="bookMarkSubmit(this.id)"></a>                      </div>
+                  </div>
+               </div>
+            </div>
+            <div class="col-md-12 col-lg-4 col-sm-12">
+               <div class="card">
+                  <div class="card-body text-center">
+                     <h5 class="card-title custom-search-title"><b>Search</b></h5>
+                     <script async="" src="https://www.omnisecu.com/ezossp/https/cse.google.com/cse.js?cx=014143265081746945559:mwllxxkurdx&amp;screx=1&amp;sxcb=3a" type="text/ez-screx"></script>
+                     <div class="gcse-search"></div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <br/>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div>
+      <div>
+      <div class="breadcrumbs text-center"><a href="https://www.omnisecu.com/">Home</a> &gt;&gt; <a href="https://www.omnisecu.com/knowledge.php">Knowledgebase</a> &gt;&gt; <a href="https://www.omnisecu.com/tcpip/index.php">TCP/IP</a> &gt;&gt; <a href="https://www.omnisecu.com/tcpip/broadcast-mac-address.php">Broadcast MAC Address - ff:ff:ff:ff:ff:ff</a>
+</div>
+
+<!-- Ezoic - Top-of-Page - top_of_page -->
+<span id="ezoic-pub-ad-placeholder-107"></span><span class="ezoic-ad box-2 box-2107 adtester-container adtester-container-107" data-ez-name="omnisecu_com-box-2"><span id="div-gpt-ad-omnisecu_com-box-2-0" ezaw="728" ezah="90" style="position:relative;z-index:0;display:inline-block;padding:0;min-height:90px;min-width:728px;" class="ezoic-ad"><script data-ezscrex="false" data-cfasync="false" type="text/javascript" style="display:none;">if(typeof __ez_fad_position != 'undefined'){__ez_fad_position('div-gpt-ad-omnisecu_com-box-2-0')};</script></span></span>
+<!-- End Ezoic - Top-of-Page - top_of_page -->
+
+</div>
+  </div>
+
+
+
+     
+         <div class="container-fluid" style="width:95%;">
+            <div class="row">
+               <div class="col-md-9 col-sm-12 col-xs-12  pt-20"><span id="ezoic-pub-ad-placeholder-124" class="ezoic-adpicker-ad"></span>
+                  <article>
+				<div class="tutorial-heading-area tutorial-heading-bottom-margin">
+               <h1 class="text-center">Broadcast MAC Address - ff:ff:ff:ff:ff:ff</h1>
+            	</div>
+			
+<p class="para-justify">The MAC address used for broadcast  (broadcast MAC address) is ff:ff:ff:ff:ff:ff. Broadcast MAC address is a MAC address consisting of all <a href="https://www.omnisecu.com/tcpip/binary-decimal-hexadecimal-numbers-and-conversions.php" target="_blank" class="inside-link">binary</a> 1s. </p>
+
+<p class="para-justify">Broadcast is &#34;one to all&#34; type of communication. In other words; &#34;send once receive all&#34;. We have two types of broadcasts in IPv4; <a href="https://www.omnisecu.com/tcpip/what-is-limited-broadcast-in-ipv4.php" target="_blank" class="inside-link">limited broadcast</a> and <a href="https://www.omnisecu.com/tcpip/what-is-directed-broadcast-in-ipv4.php" target="_blank" class="inside-link">directed broadcast</a>.</p>
+
+<p class="para-justify">Please visit following links to learn the difference between <a href="https://www.omnisecu.com/tcpip/what-is-limited-broadcast-in-ipv4.php" target="_blank" class="inside-link">limited broadcast</a> and <a href="https://www.omnisecu.com/tcpip/what-is-directed-broadcast-in-ipv4.php" target="_blank" class="inside-link">directed broadcast</a>.</p>
+
+<p class="para-justify">I strongly suggest you to visit and learn below lessons before reading further about broadcast MAC Address - ff:ff:ff:ff:ff:ff.</p>
+
+<ul>
+
+<li> <a href="https://www.omnisecu.com/cisco-certified-network-associate-ccna/unicast-multicast-broadcast.php" target="_blank" class="inside-link">What is Multicast, What is Broadcast</a></li>
+<li> <a href="https://www.omnisecu.com/tcpip/binary-decimal-hexadecimal-numbers-and-conversions.php" target="_blank" class="inside-link">Binary Decimal and Hexadecimal numbers and conversions</a></li>
+<li> <a href="https://www.omnisecu.com/tcpip/five-layered-tcpip-model.php" target="_blank" class="inside-link">Five layered TCP/IP model</a></li>
+<li> <a href="https://www.omnisecu.com/tcpip/network-layer.php" target="_blank" class="inside-link">Network Layer (Layer 3)</a></li>
+<li> <a href="https://www.omnisecu.com/tcpip/tcpip-encapsulation-decapsulation.php" target="_blank" class="inside-link">TCP/IP Data Encapsulation and Decapsulation</a></li>
+<li> <a href="https://www.omnisecu.com/tcpip/datalink-layer.php" target="_blank" class="inside-link">Datalink Layer (Layer 2)</a></li>
+<li> <a href="https://www.omnisecu.com/tcpip/ethernet-frame-format.php" target="_blank" class="inside-link">Ethernet Frame Format</a></li>
+<li> <a href="https://www.omnisecu.com/tcpip/media-access-control-mac-addresses.php" target="_blank" class="inside-link">What is MAC address or Layer 2 address or physical address</a></li>
+<li> <a href="https://www.omnisecu.com/tcpip/ipv4-protocol-and-ipv4-header.php" target="_blank" class="inside-link">IPv4 Protocol, IPv4 header and fields of IPv4 header</a></li>
+<li> <a href="https://www.omnisecu.com/tcpip/internet-layer-ip-addresses.php" target="_blank" class="inside-link">IPv4 addresses, IPv4 Address Classes, IPv4 Address Classifications</a></li>
+<li> <a href="https://www.omnisecu.com/tcpip/what-is-subnet-mask.php" target="_blank" class="inside-link">What is Subnet Mask</a></li>
+<li> <a href="https://www.omnisecu.com/tcpip/what-is-network-address.php" target="_blank" class="inside-link">What is network address</a></li>
+<li> <a href="https://www.omnisecu.com/tcpip/limited-broadcast-address.php" target="_blank" class="inside-link">Limited broadcast address</a></li>
+<li> <a href="https://www.omnisecu.com/tcpip/directed-broadcast-address.php" target="_blank" class="inside-link">Directed broadcast address</a></li>
+<li> <a href="https://www.omnisecu.com/tcpip/what-is-limited-broadcast-in-ipv4.php" target="_blank" class="inside-link">What is limited broadcast in IPv4 and how limited broadcast works</a></li>
+<li> <a href="https://www.omnisecu.com/tcpip/what-is-directed-broadcast-in-ipv4.php" target="_blank" class="inside-link">What is directed broadcast in IPv4 and how directed broadcast works</a></li>
+<li> <a href="https://www.omnisecu.com/tcpip/class-d-multicast-ip-addresses.php" target="_blank" class="inside-link">Class D multicast IP addresses</a></li>
+	
+</ul>
+	
+<p class="para-justify">Please refer below image. </p>
+
+<p class="para-center"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22800%22%20height%3D%22320%22%3E%3C%2Fsvg%3E" class="ezlazyload img-fluid" alt="broadcast-mac-address.jpg" data-ezsrc="../images/tcpip/broadcast-mac-address.jpg"/></p>
+
+<p class="para-justify">As you can see from above image, the right-most bit of the first octet (the least-significant bit in the most-significant octet) of a <a href="https://www.omnisecu.com/cisco-certified-network-associate-ccna/unicast-multicast-broadcast.php" target="_blank" class="inside-link">broadcast or multicast</a> MAC address has been reserved as &#34;1&#34;. Also note that all other 48-bits of a broadcast MAC addresses are <a href="https://www.omnisecu.com/tcpip/binary-decimal-hexadecimal-numbers-and-conversions.php" target="_blank" class="inside-link">binary</a> ones (1s). If all the eight bits in an octet is <a href="https://www.omnisecu.com/tcpip/binary-decimal-hexadecimal-numbers-and-conversions.php" target="_blank" class="inside-link">binary</a> 1 (11111111), it can be represented in <a href="https://www.omnisecu.com/tcpip/binary-decimal-hexadecimal-numbers-and-conversions.php" target="_blank" class="inside-link">hexadecimals</a> as &#34;ff&#34;. </p> 
+
+
+<p class="para-justify">A <a href="https://www.omnisecu.com/tcpip/directed-broadcast-address.php" target="_blank" class="inside-link">directed broadcast IPv4 address</a> has all <a href="https://www.omnisecu.com/tcpip/binary-decimal-hexadecimal-numbers-and-conversions.php" target="_blank" class="inside-link">binary</a> ones (1s) in its host part. For example; the <a href="https://www.omnisecu.com/tcpip/directed-broadcast-address.php" target="_blank" class="inside-link">directed broadcast address</a> of 192.168.10.0 255.255.255.0 network is 192.168.10.255, where last octet is all <a href="https://www.omnisecu.com/tcpip/binary-decimal-hexadecimal-numbers-and-conversions.php" target="_blank" class="inside-link">binary</a> ones (11111111).</p> 
+
+<p class="para-justify"><a href="https://www.omnisecu.com/tcpip/limited-broadcast-address.php" target="_blank" class="inside-link">Limited broadcast IPv4 address</a>  is 255.255.255.255; where all bits in all octets are <a href="https://www.omnisecu.com/tcpip/binary-decimal-hexadecimal-numbers-and-conversions.php" target="_blank" class="inside-link">binary</a> ones (11111111.11111111.11111111.11111111). </p>
+
+<p class="para-justify">We have already learned that IP addresses are used in <a href="https://www.omnisecu.com/tcpip/network-layer.php" target="_blank" class="inside-link">layer 3 (network layer)</a> of TCP/IP protocol stack.  <a href="https://www.omnisecu.com/tcpip/media-access-control-mac-addresses.php" target="_blank" class="inside-link">MAC addresses</a> are the addresses used in <a href="https://www.omnisecu.com/tcpip/datalink-layer.php" target="_blank" class="inside-link">layer 2 (datalink layer)</a> of TCP/IP protocol stack. As the packet moves down the TCP/IP protocol stack from <a href="https://www.omnisecu.com/tcpip/network-layer.php" target="_blank" class="inside-link">layer 3 (network layer)</a> to <a href="https://www.omnisecu.com/tcpip/datalink-layer.php" target="_blank" class="inside-link">layer 2 (datalink layer)</a> at the sending computer, if the destination IPv4 address is <a href="https://www.omnisecu.com/tcpip/limited-broadcast-address.php" target="_blank" class="inside-link">limited broadcast address</a> or a <a href="https://www.omnisecu.com/tcpip/directed-broadcast-address.php" target="_blank" class="inside-link">directed broadcast address</a> the IPv4 datagram packet will be <a href="https://www.omnisecu.com/tcpip/tcpip-encapsulation-decapsulation.php" target="_blank" class="inside-link">encapsulated</a> with an <a href="https://www.omnisecu.com/tcpip/ethernet-frame-format.php" target="_blank" class="inside-link">Ethernet frame</a> with broadcast MAC address (ff:ff:ff:ff:ff:ff) as the destination MAC address. </p>
+
+<p class="para-justify">Once the <a href="https://www.omnisecu.com/tcpip/ethernet-frame-format.php" target="_blank" class="inside-link">Ethernet frame</a> reaches the <a href="https://www.omnisecu.com/basic-networking/network-infrastructure-devices-what-are-bridges-and-switches.php" target="_blank" class="inside-link">network switch</a>, if the destination <a href="https://www.omnisecu.com/tcpip/media-access-control-mac-addresses.php" target="_blank" class="inside-link">MAC address</a> is broadcast MAC address (ff:ff:ff:ff:ff:ff), the <a href="https://www.omnisecu.com/basic-networking/network-infrastructure-devices-what-are-bridges-and-switches.php" target="_blank" class="inside-link">network switch</a> will forward the <a href="https://www.omnisecu.com/tcpip/ethernet-frame-format.php" target="_blank" class="inside-link">Ethernet frame</a> to all its active ports, so that all the devices in the <a href="https://www.omnisecu.com/cisco-certified-network-associate-ccna/what-are-collision-domain-and-broadcast-domain.php" target="_blank" class="inside-link">broadcast domain</a> will receive a copy. </p>
+
+<p class="para-justify">The point to remember is that for both <a href="https://www.omnisecu.com/tcpip/what-is-limited-broadcast-in-ipv4.php" target="_blank" class="inside-link">limited broadcast</a> and <a href="https://www.omnisecu.com/tcpip/what-is-directed-broadcast-in-ipv4.php" target="_blank" class="inside-link">directed broadcast</a>, the broadcast MAC address used is ff:ff:ff:ff:ff:ff.
+
+</p><p class="para-justify"></p>
+
+<div class="row">
+   <div class="feedback-modal">
+      <div class="col-sm-12 col-md-12 col-lg-12 feedback-button-space ">
+         <div class="text-center">Do you have any suggestions?   
+         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@getbootstrap" id="openfbform" onclick="resetForm()">Please let us know!</button></div>
+         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+               <div class="modal-content">
+                  <div class="modal-header">
+                     <h5 class="modal-title" id="exampleModalLabel">Feedback</h5>
+                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                     <span aria-hidden="true">×</span>
+                     </button>
+                  </div>
+                  <div class="modal-body">
+                     <form action="https://www.omnisecu.com/feedbacksubmit.php" method="post" id="feedbackform" onsubmit="return checkform(this);">
+                        <div class="form-group">
+                           <label for="username" class="col-form-label">Name:</label>
+                           <input type="text" class="form-control" id="username" name="username" required=""/>
+                        </div>
+                        <div class="form-group">
+                           <label for="useremail" class="col-form-label">E-mail</label>
+                           <input type="email" class="form-control" id="useremail" name="useremail"/>
+                        </div>
+                        <div class="form-group">
+                           <label for="usercomments" class="col-form-label">Message:</label>
+                           <textarea class="form-control" id="usercomments" name="usercomments"></textarea>
+                        </div>
+				       <div class="g-recaptcha" data-sitekey="6Ldeus8UAAAAAJZ4M-A0mbr6OL4MfBiyEKOW28jG"></div> <br/>
+				   <div class="modal-footer">
+                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                     <input type="submit" class="btn btn-primary" name="bsend" id="bsend" value="Submit"/>
+                  </div>
+
+                     </form>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+<div class="row">
+   <div class="text-center feedback-modal">
+      <div class="col-sm-12 col-md-12 col-lg-12 feedback-button-space">
+         <div class="row">
+            <div class="col-md-12 col-lg-4 col-sm-12">
+               <div class="social-media-like">
+                  <div class=" text-center">
+                     <h5 class="social-media-like-title"><b>Like us on</b></h5>
+                     <a class="facebookBtn smGlobalBtn" href="https://www.facebook.com/omnisecu" rel="nofollow" target="_blank"></a>
+                  </div>
+               </div>
+            </div>
+            <div class="col-md-12 col-lg-8 col-sm-12">
+               <div class=" social-media-share">
+                  <div class=" text-center">
+                     <h5 class=" social-media-share-title"><b>Share on</b></h5>
+                     <div id="social">
+      <a id="facebook-bottom" class="facebookBtn smGlobalBtn" href="#" onclick="bookMarkSubmit(this.id)"></a>
+      <a id="twitter-bottom" class="twitterBtn smGlobalBtn" href="#" onclick="bookMarkSubmit(this.id)"></a>
+      <a id="linkedin-bottom" class="linkedinBtn smGlobalBtn" href="#" onclick="bookMarkSubmit(this.id)"></a>
+      <a id="reddit-bottom" class="redditBtn smGlobalBtn" href="#" onclick="bookMarkSubmit(this.id)"></a>
+      <a id="pinterest-bottom" class="pinterestBtn smGlobalBtn" href="#" onclick="bookMarkSubmit(this.id)"></a>
+      <a id="whatsapp-bottom" class="whatsappBtn smGlobalBtn" href="#" onclick="bookMarkSubmit(this.id)"></a>
+      <a id="email-bottom" class="emailBtn smGlobalBtn" href="#" onclick="bookMarkSubmit(this.id)"></a> 
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+<div class="previous_next_area">
+   <div class="previous_text previous_area previous_left"><a href="media-access-control-mac-addresses.php"> &lt;&lt; What is MAC address or Layer 2 address or physical address </a></div>
+   <div class="next_text next_area next_right"><a href="ipv4-multicast-mac-addresses.php"> IPv4 multicast MAC Addresses &gt;&gt; </a> </div>
+</div>
+
+<div class="related_post_area">
+<div class="related_post_heading">Related Tutorials</div>
+
+
+     
+
+• <a href="https://www.omnisecu.com/tcpip/tcpip-introduction.php" target="_blank" class="related-tuts">Introduction to TCP/IP, Features of TCP/IP, TCP/IP History, What is RFC (Request for Comments)</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/osi-model.php" target="_blank" class="related-tuts">Seven Layers of OSI Model and functions of seven layers of OSI model</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/five-layered-tcpip-model.php" target="_blank" class="related-tuts">Five layered TCP/IP model</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/network-layer.php" target="_blank" class="related-tuts">Network Layer (Layer 3)</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/tcpip-encapsulation-decapsulation.php" target="_blank" class="related-tuts">TCP/IP Data Encapsulation and Decapsulation</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/datalink-layer.php" target="_blank" class="related-tuts">Datalink Layer (Layer 2)</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/ethernet-frame-format.php" target="_blank" class="related-tuts">Ethernet Frame Format</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/media-access-control-mac-addresses.php" target="_blank" class="related-tuts">What is MAC address or Layer 2 address or physical address</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/ipv4-protocol-and-ipv4-header.php" target="_blank" class="related-tuts">IPv4 Protocol, IPv4 header and fields of IPv4 header</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/internet-layer-ip-addresses.php" target="_blank" class="related-tuts">IPv4 addresses, IPv4 Address Classes, IPv4 Address Classifications</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/what-is-subnet-mask.php" target="_blank" class="related-tuts">What is Subnet Mask</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/what-is-network-address.php" target="_blank" class="related-tuts">What is network address</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/limited-broadcast-address.php" target="_blank" class="related-tuts">Limited broadcast address</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/directed-broadcast-address.php" target="_blank" class="related-tuts">Directed broadcast address</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/what-is-limited-broadcast-in-ipv4.php" target="_blank" class="related-tuts">What is limited broadcast in IPv4 and how limited broadcast works</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/what-is-directed-broadcast-in-ipv4.php" target="_blank" class="related-tuts">What is directed broadcast in IPv4 and how directed broadcast works</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/what-is-default-gateway.php" target="_blank" class="related-tuts">What is default gateway</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/what-are-private-ip-addresses.php" target="_blank" class="related-tuts">What are private IP addresses - RFC 1918 private addresses</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/apipa-address.php" target="_blank" class="related-tuts">APIPA Addresses (Automatic Private IP Addresses)</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/what-is-loopback-address.php" target="_blank" class="related-tuts">What is loopback address in IPv4</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/what-is-localhost.php" target="_blank" class="related-tuts">What is localhost</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/class-a-networks-and-class-a-ip-addresses.php" target="_blank" class="related-tuts">Class A networks and Class A IP addresses</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/class-b-networks-and-class-b-ip-addresses.php" target="_blank" class="related-tuts">Class B networks and Class B IP addresses</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/class-c-networks-and-class-c-ip-addresses.php" target="_blank" class="related-tuts">Class C networks and Class C IP addresses</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/class-d-multicast-ip-addresses.php" target="_blank" class="related-tuts">Class D multicast IP addresses</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/internet-layer-ip-subnetting-part1.php" target="_blank" class="related-tuts">Subnetting - Part 1</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/internet-layer-ip-subnetting-part2.php" target="_blank" class="related-tuts">Subnetting - Part 2</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/internet-layer-ip-subnetting-part3.php" target="_blank" class="related-tuts">Subnetting - Part 3</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/internet-layer-ip-subnetting-part4.php" target="_blank" class="related-tuts">Subnetting - Part 4</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/internet-layer-ip-subnetting-part5.php" target="_blank" class="related-tuts">Subnetting - Part 5</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/internet-layer-ip-subnetting-part6.php" target="_blank" class="related-tuts">Subnetting - Part 6</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/variable-length-subnet-masking-vlsm.php" target="_blank" class="related-tuts">Variable Length Subnet Masking, VLSM, IP V4 Subnetting, subnetting tutorials, IP study guides, IP documentation, IP tutorials</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/ip-supernetting.php" target="_blank" class="related-tuts">Supernetting, IP Supernetting, IP Supernetting tutorial, How to Supernet, Supernetting Guide, Supernetting Concepts</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/how-to-find-network-address-and-broadcast-address-of-a-subnetted-ipv4-address.php" target="_blank" class="related-tuts">How to find out the Network Address and Broadcast Address of a subnetted IPv4 address</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/address-resolution-protocol-arp.php" target="_blank" class="related-tuts">Address Resolution Protocol Tutorial, How ARP work, ARP Message Format</a><br/>
+• <a href="https://www.omnisecu.com/tcpip/what-is-gratuitous-arp.php" target="_blank" class="related-tuts">What is Gratuitous ARP</a><br/>
+
+</div>
+
+<!--  </article>  -->
+                              
+  			      </article></div>
+			   
+             <div class="col-md-3 col-sm-12 col-xs-12 pt-20"><span id="ezoic-pub-ad-placeholder-129" class="ezoic-adpicker-ad"></span><span class="ezoic-ad box-1 box-1129 adtester-container adtester-container-129" data-ez-name="omnisecu_com-box-1"><span id="div-gpt-ad-omnisecu_com-box-1-0" ezaw="300" ezah="250" style="position:relative;z-index:0;display:inline-block;padding:0;min-height:250px;min-width:300px;" class="ezoic-ad"><script data-ezscrex="false" data-cfasync="false" type="text/javascript" style="display:none;">if(typeof __ez_fad_position != 'undefined'){__ez_fad_position('div-gpt-ad-omnisecu_com-box-1-0')};</script></span><span style="width:300px;display:block;height:14px;margin:auto" class="reportline"><span style="text-align:center;font-size: smaller;float:left;line-height:normal;"><a href="https://www.ezoic.com/what-is-ezoic/" target="_blank" rel="noopener noreferrer nofollow" style="cursor:pointer"><img src="https://go.ezoic.net/utilcave_com/img/ezoic.png" alt="Ezoic" loading="lazy" style="height:12px !important; padding:2px !important; border:0px !important; cursor:pointer !important; width: 58px !important; margin:0 !important; box-sizing: content-box !important;"/></a></span><span class="ez-report-ad-button" name="?pageview_id=b7f1cbe5-54a1-4b18-79e2-9dd947d3b02f&amp;ad_position_id=129&amp;impression_group_id=omnisecu_com-box-1/2021-10-23/3597626006761839&amp;ad_size=300x250&amp;domain_id=147239&amp;url=https://www.omnisecu.com/tcpip/broadcast-mac-address.php" style="cursor: pointer!important; font-size:12px !important;color: #a5a5a5 ;float:right;text-decoration:none !important;font-family:arial !important;line-height:normal;">report this ad</span></span></span>
+                  
+
+				<aside>
+                  <div class="text-center"> 
+					  
+					<!-- Ezoic - Sidebar-Top - sidebar -->
+					<span id="ezoic-pub-ad-placeholder-108"></span>
+					<!-- End Ezoic - Sidebar-Top - sidebar -->
+                  </div>
+     			</aside>                 
+               <span id="ezoic-pub-ad-placeholder-157" class="ezoic-adpicker-ad"></span><span class="ezoic-ad banner-2 banner-2157 adtester-container adtester-container-157 ez-sticky" data-ez-name="omnisecu_com-banner-2"><span id="div-gpt-ad-omnisecu_com-banner-2-0" ezaw="300" ezah="250" style="position:relative;z-index:0;display:inline-block;padding:0;min-height:250px;min-width:300px;" class="ezoic-ad"><script data-ezscrex="false" data-cfasync="false" type="text/javascript" style="display:none;">if(typeof __ez_fad_position != 'undefined'){__ez_fad_position('div-gpt-ad-omnisecu_com-banner-2-0')};</script></span><span style="width:300px;display:block;height:14px;margin:auto" class="reportline"><span style="text-align:center;font-size: smaller;float:left;line-height:normal;"><a href="https://www.ezoic.com/what-is-ezoic/" target="_blank" rel="noopener noreferrer nofollow" style="cursor:pointer"><img src="https://go.ezoic.net/utilcave_com/img/ezoic.png" alt="Ezoic" loading="lazy" style="height:12px !important; padding:2px !important; border:0px !important; cursor:pointer !important; width: 58px !important; margin:0 !important; box-sizing: content-box !important;"/></a></span><span class="ez-report-ad-button" name="?pageview_id=b7f1cbe5-54a1-4b18-79e2-9dd947d3b02f&amp;ad_position_id=157&amp;impression_group_id=omnisecu_com-banner-2/2021-10-23/8784325062796376&amp;ad_size=300x250&amp;domain_id=147239&amp;url=https://www.omnisecu.com/tcpip/broadcast-mac-address.php" style="cursor: pointer!important; font-size:12px !important;color: #a5a5a5 ;float:right;text-decoration:none !important;font-family:arial !important;line-height:normal;">report this ad</span></span></span></div>
+              
+			  </div>
+         </div>
+  
+<div>
+<!-- Ezoic - Bottom-of-Page - bottom_of_page -->
+<span id="ezoic-pub-ad-placeholder-110"></span><span class="ezoic-ad medrectangle-1 medrectangle-1110 adtester-container adtester-container-110" data-ez-name="omnisecu_com-medrectangle-1"><span id="div-gpt-ad-omnisecu_com-medrectangle-1-0" ezaw="250" ezah="250" style="position:relative;z-index:0;display:inline-block;padding:0;width:100%;max-width:1200px;margin-left:auto !important;margin-right:auto !important;min-height:250px;min-width:970px;" class="ezoic-ad"><script data-ezscrex="false" data-cfasync="false" type="text/javascript" style="display:none;">if(typeof __ez_fad_position != 'undefined'){__ez_fad_position('div-gpt-ad-omnisecu_com-medrectangle-1-0')};</script></span><span style="width:250px;display:block;height:14px;margin:auto" class="reportline"><span style="text-align:center;font-size: smaller;float:left;line-height:normal;"><a href="https://www.ezoic.com/what-is-ezoic/" target="_blank" rel="noopener noreferrer nofollow" style="cursor:pointer"><img src="https://go.ezoic.net/utilcave_com/img/ezoic.png" alt="Ezoic" loading="lazy" style="height:12px !important; padding:2px !important; border:0px !important; cursor:pointer !important; width: 58px !important; margin:0 !important; box-sizing: content-box !important;"/></a></span><span class="ez-report-ad-button" name="?pageview_id=b7f1cbe5-54a1-4b18-79e2-9dd947d3b02f&amp;ad_position_id=110&amp;impression_group_id=omnisecu_com-medrectangle-1/2021-10-23/5008944426787590&amp;ad_size=250x250&amp;domain_id=147239&amp;url=https://www.omnisecu.com/tcpip/broadcast-mac-address.php" style="cursor: pointer!important; font-size:12px !important;color: #a5a5a5 ;float:right;text-decoration:none !important;font-family:arial !important;line-height:normal;">report this ad</span></span></span>
+<!-- End Ezoic - Bottom-of-Page - bottom_of_page -->
+</div>
+<div></div>
+<div></div>
+<footer>
+   <div class="footer-bgcolor" style="padding: 10px;">
+      <div class="container">
+         <h2 class="text-center white-text">Quick Links</h2>
+         <hr class="white-text"/>
+         <div class="row">
+            <div class="col-lg-1"></div>
+            <div class="col-sm-12 col-md-2 col-lg-2">
+               <p><a class="white-text" href="https://www.omnisecu.com/index.php">Home</a></p>
+               <p><a class="white-text" href="https://www.omnisecu.com/about.php">About Us</a></p>
+               <p><a class="white-text" href="https://www.omnisecu.com/faq.php">FAQ</a></p>
+            </div>
+            <div class="col-sm-12 col-md-2 col-lg-2">
+               <p><a class="white-text" href="https://www.omnisecu.com/terms-of-use.php">Terms of Use</a></p>
+               <p><a class="white-text" href="https://www.omnisecu.com/trademarks.php">Trademarks</a></p>
+               <p><a class="white-text" href="https://www.omnisecu.com/privacy-policy.php">Privacy Policy</a></p>
+            </div>
+            <div class="col-sm-12 col-md-2 col-lg-2">
+               <p><a class="white-text" href="https://www.omnisecu.com/sitemap.php">Sitemap</a></p>
+               <p><a class="white-text" href="https://www.omnisecu.com/knowledge.php">Knowledge Base</a></p>
+               <p><a class="white-text" href="https://www.omnisecu.com/blog/index.php">Blog</a></p>
+            </div>
+            <div class="col-sm-12 col-md-2 col-lg-2">
+               <p><a class="white-text" href="https://www.omnisecu.com/disclaimer.php">Disclaimer</a></p>
+               <p><a class="white-text" href="https://www.omnisecu.com/support.php">Support Us</a></p>
+               <p><a class="white-text" href="https://www.omnisecu.com/feedback.php">FeedBack</a></p>
+            </div>
+            <div class="col-sm-12 col-md-2 col-lg-2">
+               
+               <p><a class="white-text" href="https://www.omnisecu.com/contact.php">Contact Us</a></p>
+               
+            </div>
+            <div class="col-lg-1"></div>
+         </div>
+         <hr/>
+         <p class="text-center text-white">Copyright ©  2008 - 2021 <a href="https://www.omnisecu.com/" target="_blank" class="text-white">OmniSecu.com</a>. All Rights Reserved.</p>
+      </div>
+   <span id="ezoic-pub-ad-placeholder-128" class="ezoic-adpicker-ad"></span></div>
+</footer>
+
+  
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://www.omnisecu.com/ezossp/https/cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js?screx=1&amp;sxcb=3a" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous" type="text/ez-screx"></script>
+<script src="https://www.omnisecu.com/js/bootstrap.min.js"></script>
+<script type="text/ez-screx">
+   ezoicSiteSpeed($(document), String(/documentReady/).substring(1).slice(0,-1), String(/jQuery-document-dot-ready/).substring(1).slice(0,-1), function(){
+       $("#testimonial-slider").owlCarousel({
+           items:3,
+           itemsDesktop:[1000,3],
+           itemsDesktopSmall:[980,2],
+           itemsTablet:[768,2],
+           itemsMobile:[650,1],
+           pagination:true,
+           navigation:false,
+           slideSpeed:1000,
+           autoPlay:true
+       });
+   });
+</script>
+
+
+<!--[selectrongo:done]--><div class="ezmob-footer ezoic-floating-bottom ezo_ad ezmob-footer-desktop" id="ezmobfooter"><center><span id="ezoic-pub-ad-placeholder-100"></span><div class="ezmob-footer ezoic-floating-bottom ezo_ad ezmob-footer-desktop" id="ezmobfooter"><center><span class="ezoic-ad medrectangle-2 medrectangle-2100 adtester-container adtester-container-100" data-ez-name="omnisecu_com-medrectangle-2"><span id="div-gpt-ad-omnisecu_com-medrectangle-2-0" ezaw="970" ezah="90" style="position:relative;z-index:0;display:inline-block;padding:0;min-height:90px;min-width:970px;" class="ezoic-ad"><script data-ezscrex="false" data-cfasync="false" type="text/javascript" style="display:none;">if(typeof __ez_fad_position != 'undefined'){__ez_fad_position('div-gpt-ad-omnisecu_com-medrectangle-2-0')};</script></span></span></center><span class="ezmob-footer-close" onclick="document.getElementById(&#39;ezmobfooter&#39;).style.display=&#39;none&#39;;">x</span></div></center><span class="ezmob-footer-close" onclick="document.getElementById(&#39;ezmobfooter&#39;).style.display=&#39;none&#39;;">x</span></div><script type="text/javascript">
+				var __inScopeForCCPA = false;
+		function __uspapi(command, version, callback) {
+			var response = null;
+			var successs = false;
+			if (command === "getUSPData" && version === 1) {
+				var uspString = "1"; // Version
+				if (__inScopeForCCPA) {
+					uspString += "Y"; // Has Explicit Notice for Opt Out been provided (ex footer or minor consent modal)
+					var result;
+					var consentCookie = (result = new RegExp('(?:^|; )ezoccpaconsent=([^;]*)').exec(document.cookie)) ? (result[1]) : null;
+					if (consentCookie === "nonconsent") {
+						uspString += "Y";
+					}
+					else {
+						uspString += "N";
+					}
+					uspString += "N" // Is pub a signatory to the IAB Limited Service Provider Agreement (http://www.iabprivacy.com/)
+				}
+				else {
+					uspString += "---";
+				}
+				response = {
+					uspString: uspString,
+					version: 1
+				};
+				success = true;
+			}
+			return callback(response, success);
+		};
+		function __receiveUspapiMessage(event) {
+			if (event.data.hasOwnProperty('__uspapiCall')) {
+				__uspapi('getUSPData', 1, function(uspData, success) {
+					event.source.postMessage({
+						__uspapiReturn: {
+							returnValue: uspData,
+							success: success,
+							callId: event.data.__uspapiCall.callId
+						}
+					},
+					event.origin);
+				});
+			}
+			return null;
+		};
+		window.addEventListener("message", __receiveUspapiMessage, false);
+</script>
+<script>function __ez_fad_ezpbinit(){var s = document.createElement( 'script' );
+	s.setAttribute( 'src', '//go.ezodn.com/hb/dall.js?b=amx,ix,onetag,openx,pubmatic,smilewanted,unruly,yieldmo&cb=195-2-30' );
+	document.body.appendChild( s );}var epbjs=epbjs||{};epbjs.que=epbjs.que||[];epbjs.bidderTimeout=2500;epbjs.useAdj=true;epbjs.SS={"amx":11290,"ix":10082,"onetag":11291,"openx":10015,"pubmatic":10061,"smilewanted":11313,"unruly":10097,"yieldmo":11315};epbjs.bidders=['amx,ix,onetag,openx,pubmatic,smilewanted,unruly,yieldmo'];epbjs.que.push(function(){});epbjs.bidderSettings={'ix': { bidCpmAdjustment: function(bidCpm) { var adj1 = bidCpm * 1.000000; var adj2 = adj1 * 1.000000; return adj2; }},'amx': { bidCpmAdjustment: function(bidCpm) { var adj1 = bidCpm * 1.000000; var adj2 = adj1 * 1.000000; return adj2; }},'yieldmo': { bidCpmAdjustment: function(bidCpm) { var adj1 = bidCpm * 1.000000; var adj2 = adj1 * 1.000000; return adj2; }},'unruly': { bidCpmAdjustment: function(bidCpm) { var adj1 = bidCpm * 0.420000; var adj2 = adj1 * 1.000000; return adj2; }},'smilewanted': { bidCpmAdjustment: function(bidCpm) { var adj1 = bidCpm * 1.000000; var adj2 = adj1 * 1.000000; return adj2; }},'pubmatic': { bidCpmAdjustment: function(bidCpm) { var adj1 = bidCpm * 1.000000; var adj2 = adj1 * 1.000000; return adj2; }},'openx': { bidCpmAdjustment: function(bidCpm) { var adj1 = bidCpm * 1.000000; var adj2 = adj1 * 1.000000; return adj2; }},'onetag': { bidCpmAdjustment: function(bidCpm) { var adj1 = bidCpm * 1.000000; var adj2 = adj1 * 1.000000; return adj2; }},};epbjs.gadj=1.000000;var __enableAnalytics=false;
+var __s2sbidders=['onetag'];
+var __allBidders=['ix','amx','yieldmo','unruly','smilewanted','pubmatic','openx','onetag'];
+__ez.queue.addFile('/detroitchicago/houston.js', '/detroitchicago/houston.js?gcb=2&cb=5', false, [], true, false, true, false);__ez.queue.addFunc("epbjsRequestAdUnits", "epbjsRequestAdUnits", [[{code: 'div-gpt-ad-omnisecu_com-box-2-0', mediaTypes: {banner: { sizes:[[728,90]] }}, bids: [{bidder: 'ix', params: { siteId: '305137', size: [728,90] }},{bidder: 'amx', params: { tagId: 'ZXpvaWMuY29t' }},{bidder: 'yieldmo', params: { placementId: '2834942196124164132' }},{bidder: 'smilewanted', params: { zoneId: 'ezoic.com_hb_display' }},{bidder: 'pubmatic', params:{ publisherId: '156983', adSlot: 'e_top_of_page_728x90' }},{bidder: 'openx',params: { delDomain: 'ezoic-d.openx.net', unit: '538151782' }},{bidder: 'onetag', params: { pubId: '62499636face9dc' }}] },{code: 'div-gpt-ad-omnisecu_com-box-1-0', mediaTypes: {banner: { sizes:[[300,250]] }}, bids: [{bidder: 'ix', params: { siteId: '305136', size: [300,250] }},{bidder: 'amx', params: { tagId: 'ZXpvaWMuY29t' }},{bidder: 'yieldmo', params: { placementId: '2834942196124164132' }},{bidder: 'smilewanted', params: { zoneId: 'ezoic.com_hb_display' }},{bidder: 'pubmatic', params:{ publisherId: '156983', adSlot: 'e_sidebar_300x250' }},{bidder: 'openx',params: { delDomain: 'ezoic-d.openx.net', unit: '538151781' }},{bidder: 'onetag', params: { pubId: '62499636face9dc' }}] },{code: 'div-gpt-ad-omnisecu_com-medrectangle-2-0', mediaTypes: {banner: { sizes:[[970,90],[728,90]] }}, bids: [{bidder: 'ix', params: { siteId: '305141', size: [970,90] }},{bidder: 'amx', params: { tagId: 'ZXpvaWMuY29t' }},{bidder: 'yieldmo', params: { placementId: '2834942196124164132' }},{bidder: 'smilewanted', params: { zoneId: 'ezoic.com_hb_display' }},{bidder: 'pubmatic', params:{ publisherId: '156983', adSlot: 'e_bottom_floating_970x90' }},{bidder: 'openx',params: { delDomain: 'ezoic-d.openx.net', unit: '538151782' }},{bidder: 'onetag', params: { pubId: '62499636face9dc' }}] },{code: 'div-gpt-ad-omnisecu_com-banner-2-0', mediaTypes: {banner: { sizes:[[300,250]] }}, bids: [{bidder: 'ix', params: { siteId: '305145', size: [300,250] }},{bidder: 'amx', params: { tagId: 'ZXpvaWMuY29t' }},{bidder: 'yieldmo', params: { placementId: '2834942196124164132' }},{bidder: 'smilewanted', params: { zoneId: 'ezoic.com_hb_display' }},{bidder: 'pubmatic', params:{ publisherId: '156983', adSlot: 'e_sidebar_floating_1_300x250' }},{bidder: 'openx',params: { delDomain: 'ezoic-d.openx.net', unit: '538151781' }},{bidder: 'onetag', params: { pubId: '62499636face9dc' }}] },{code: 'div-gpt-ad-omnisecu_com-medrectangle-1-0', mediaTypes: {banner: { sizes:[[250,250]] }}, bids: [{bidder: 'amx', params: { tagId: 'ZXpvaWMuY29t' }},{bidder: 'yieldmo', params: { placementId: '2834942196124164132' }},{bidder: 'smilewanted', params: { zoneId: 'ezoic.com_hb_display' }},{bidder: 'pubmatic', params:{ publisherId: '156983', adSlot: 'e_bottom_of_page_250x250' }},{bidder: 'onetag', params: { pubId: '62499636face9dc' }}] }]], false, ['/detroitchicago/houston.js'], true, true, true, true);</script>
+<script>var __ez_tkn_evnt = function() { if(typeof(_ezaq) != 'undefined'){if(typeof window.ezogtk !== "undefined" && window.ezogtk !== "") {__ez.bit.AddAndFire(_ezaq.page_view_id,[new __ezDotData("ext_user_hash",window.ezogtk)]);}}};document.addEventListener("DOMContentLoaded", __ez.queue.addFunc("__ez_tkn_evnt", "__ez_tkn_evnt", event, false, ['/detroitchicago/minneapolis.js','/detroitchicago/memphis.js'], true, true, false, true));</script>
+<script async data-ezscrex="false">__ez_fad_load(0,0);__ez_fad_doc_ht=__ez_fad_docht();__ez_fad_vp_ht=__ez_fad_vpht();function __ez_fad_scroll(){return window.pageYOffset||(document.documentElement||document.body.parentNode||document.body).scrollTop}
+var __ez_fad_scrollint=setInterval(function(){var sy=__ez_fad_scroll();var isShortPage=__ez_fad_doc_ht<=(__ez_fad_vh+100);var bot=(__ez_fad_vp_ht+sy);var botThresh=bot+__ez_fad_vp_ht;for(var divid in __ez_fad_divpos){if(__ez_fad_fastdiv.indexOf(divid)!=-1){continue;}
+var divPos=__ez_fad_divpos[divid];if(divPos>0&&divPos>sy&&divPos<(sy+200)){if(typeof __ez_fad_instaslots[divid]=='function'){__ez_fad_instaslots[divid]();}}else if(divPos>0&&divPos>sy&&divPos<(sy+600)){if(typeof __ez_fad_instaslots[divid]=='function'){__ez_fad_viewslots[divid]();}}}
+__ez_fad_chkpos();if(ezslit_run[0]!==true){__ez_fad_load(0,0);}
+if((sy>0||isShortPage)&&ezslit_run[1]!=true){__ez_fad_load(1,null);__ez_fad_load(5,null);}
+if((sy>100||isShortPage)&&ezslit_run[2]!=true){__ez_fad_load(2,null);}
+if(sy>(__ez_fad_vp_ht*.75)&&ezslit_run[3]!=true){__ez_fad_load(3,null);}
+if(document.readyState==="complete"&&!__ez_fad_floatshowd&&typeof __ez_fad_floating!=='undefined'&&__ez_fad_floating.length>0&&__ez_fad_count===0){googletag.cmd.push(__ez_fad_floatshow);}
+if(ezslit_run[1]==true&&ezslit_run[2]==true&&ezslit_run[3]==true){clearInterval(__ez_fad_scrollint);}},500);function __ez_fad_chkpos(){if(typeof __ez_fad_divs[4]!='undefined'){for(var i=0;i<__ez_fad_divs[4].length;i++){var id=__ez_fad_divs[4][i];__ez_fad_divs[4][i]=null;__ez_fad_position([id]);}}}</script>
+<script type="text/javascript">
+						var rFunc = function() {
+							if (typeof googletag === 'undefined') return;
+							var runNonPersonalized = 1;
+							if (__ez.ck.get("ezCMPCookieConsent",null).indexOf("4=1") !== -1) {runNonPersonalized=0;}
+							if (runNonPersonalized === 1) {
+								if(typeof __ez == 'object' && typeof __ez.bit == 'object' && typeof window["_ezaq"] == 'object' && typeof window["_ezaq"]["page_view_id"] == 'string') {
+									__ez.bit.AddAndFire(window["_ezaq"]["page_view_id"], [(new __ezDotData('non_personalized_ads', true))]);
+								}
+							}
+							(adsbygoogle=window.adsbygoogle||[]).requestNonPersonalizedAds=runNonPersonalized;
+							(adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=0;
+							googletag.cmd.push(function() {
+							googletag.pubads().setRequestNonPersonalizedAds(runNonPersonalized);
+							googletag.pubads().refresh();
+							});
+							};
+					if(document.body.addEventListener) {document.body.addEventListener("ezCMPComplete",rFunc,false);}else{document.body.attachEvent("on"+ezCMPComplete,rFunc);}
+					</script>
+<script type="text/javascript">(function(f,a){function g(b,a,c){b.addEventListener?b.addEventListener(a,c):b.attachEvent("on"+a,function(){c.call(b)})}function k(b){b&&("string"==typeof b["class"]&&b["class"]&&a.getElementById("uglipop_popbox").setAttribute("class",b["class"]),b.keepLayout&&!b["class"]&&a.getElementById("uglipop_popbox").setAttribute("style","position:relative;height:300px;width:300px;background-color:white;opacity:1;"),"string"==typeof b.content&&b.content&&"html"==b.source&&(a.getElementById("uglipop_popbox").innerHTML=b.content),"string"==typeof b.content&&b.content&&"div"==b.source&&(a.getElementById("uglipop_popbox").innerHTML=a.getElementById(b.content).innerHTML));a.getElementById("uglipop_overlay_wrapper").style.display="";a.getElementById("uglipop_overlay").style.display="";a.getElementById("uglipop_content_fixed").style.display=""}function h(){a.getElementById("uglipop_overlay_wrapper").style.display="none";a.getElementById("uglipop_overlay").style.display="none";a.getElementById("uglipop_content_fixed").style.display="none"}g(a,"DOMContentLoaded",function(){var b=a.createElement("div"),e=a.createElement("div"),c=a.createElement("div"),d=a.createElement("div");e.id="uglipop_content_fixed";e.setAttribute("style","position:fixed;top: 50%;left: 50%;transform: translate(-50%, -50%);-webkit-transform: translate(-50%, -50%);-ms-transform: translate(-50%, -50%);opacity:1;z-index:10000000;");c.id="uglipop_popbox";d.id="uglipop_overlay_wrapper";d.setAttribute("style","position:absolute;top:0;bottom:0;left:0;right:0;display:none");b.id="uglipop_overlay";b.setAttribute("style","position:fixed;top:0;bottom:0;left:0;right:0;opacity:0.3;width:100%;height:100%;background-color:black;");d.appendChild(b);e.appendChild(c);a.body.appendChild(d);a.body.appendChild(e);a.getElementById("uglipop_overlay_wrapper").style.display="none";a.getElementById("uglipop_overlay").style.display="none";a.getElementById("uglipop_content_fixed").style.display="none";d.addEventListener("click",h);g(f,"keydown",function(a){27==a.keyCode&&h()});f.uglipop=k})})(window,document);var ezRBA=(function(){function init(){var reportAdsBtns=document.querySelectorAll('.ez-report-ad-button');for(var i=0;i<reportAdsBtns.length;i++){reportAdsBtns[i].addEventListener('click',function(e){var url='<iframe src="https://svc.ezoic.com/pub/reportads/reportads.html'+e.target.getAttribute('name')+'" width="400" height="500" style="border-radius: 10px; box-shadow: 2px 2px 30px 6px rgba(0,0,0,0.75); border: 1px solid black;"></iframe>'
+uglipop({class:'none',source:'html',content:url,});});}
+function bindEvent(element,eventName,eventHandler){if(element.addEventListener){element.addEventListener(eventName,eventHandler,false);}else if(element.attachEvent){element.attachEvent('on'+eventName,eventHandler);}}
+bindEvent(window,'message',function(e){if(e.data==='close-report-ad-modal'){document.getElementById('uglipop_overlay_wrapper').style.display='none';document.getElementById('uglipop_overlay').style.display='none';document.getElementById('uglipop_content_fixed').style.display='none';}})}
+return{init:init};})();ezRBA.init();</script>
+<script type="text/javascript" data-cfasync="false">(function(){var addListeners=function(eltype,els){for(var en=0;en<els.length;en++){var el=els[en];if(el.complete==false||(typeof(el.readyState)!='undefined'&&el.readyState<4)){var src=el.getAttribute('src')||el.currentSrc;if(typeof(el.readyState)!='undefined'&&el.readyState==0){el.addEventListener('loadstart',function(e){var src=e.currentTarget.getAttribute('src')||e.currentSrc;window["ezorqs"](e,src);});}else{var src=el.getAttribute('src')||el.currentSrc;window["ezorqs"](el,src);}
+el.addEventListener('load',function(e){var src=e.currentTarget.getAttribute('src')||e.srcElement.currentSrc;window["ezorqe"](e,src);});el.addEventListener('loadeddata',function(e){var src=e.currentTarget.getAttribute('src')||e.srcElement.currentSrc;window["ezorqe"](e,src);});el.addEventListener('error',function(e){var src=e.currentTarget.getAttribute('src')||e.srcElement.currentSrc;window["ezorqe"](e,src);});}}};var CssLoadedListeners=function(els){for(var en=0;en<els.length;en++){var el=els[en];if((el.getAttribute('rel')=='preload'||el.getAttribute('rel')=='stylesheet')&&el.getAttribute('href')!=null){if(isStyleSheetLoaded(el.getAttribute('href'))){window["ezorqs"](el,el.getAttribute('href'));var img=document.createElement('img');img.onerror=function(e){if(typeof e.path!="undefined"&&typeof e.path[0].currentSrc!="undefined"){window["ezorqe"](el,e.path[0].currentSrc);}else if(typeof e.srcElement!="undefined"&&typeof e.srcElement.href!="undefined"){window["ezorqe"](el,e.srcElement.href);}};img.src=el.getAttribute('href');}else{}}else{}}};function isStyleSheetLoaded(url){for(var i=0;i<document.styleSheets.length;i++){if(document.styleSheets[i].href==url){return true}}
+return false;}
+__ez_addAllListeners=function(){addListeners('img',document.querySelectorAll('img'));addListeners('video',document.querySelectorAll('video'));addListeners('audio',document.querySelectorAll('audio'));CssLoadedListeners(document.querySelectorAll('link'));if(typeof window["__ez"]["ssaf"]!="undefined"&&window["__ez"]["ssaf"].indexOf(16)>-1){if(typeof window["__ez"]["sshsdef"]!=="undefined"&&window["__ez"]["sshsdef"]===false){if(Element.prototype.addEventListener){if(typeof window["onload"]=="function"){window["addEventListener"]("load",window["onload"]);window["onload"]=null;}
+if(typeof document["onload"]=="function"){document["addEventListener"].addEventListener("load",document["onload"]);document["onload"]=null;}}}}}
+__ez.queue.addFunc("__ez_addAllListeners","__ez_addAllListeners",null,false,['/detroitchicago/tulsa.js'],true,true,true,true);}());</script>
+<script type="text/javascript" style='display:none;'>var __ez_dims = (function() {
+		var setCookie = function( name, content, expiry ) {
+			return document.cookie = name+'='+content+((expiry)?';expires='+(new Date(Math.floor(new Date().getTime()+expiry*1000)).toUTCString()):'')+';path=/';
+		};
+		var ffid = 1;
+		var oh = window.screen.height;
+		var ow = window.screen.width;
+		var h = ffid === 1 ? oh : (oh > ow) ? oh : ow;
+		var w = ffid === 1 ? ow : (oh > ow) ? ow : oh;
+		var uh = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
+		var uw = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
+		setCookie('ezds', encodeURIComponent('ffid='+ffid+',w='+w+',h='+h), (31536e3*7));
+		setCookie('ezohw', encodeURIComponent('w='+uw+',h='+uh), (31536e3*7));
+	})();</script><script type='text/javascript' style='display:none;' async>
+</script>
+<script type="text/javascript">
+	var ezCanEngagePage = false;
+	(function() {
+		var attachEvent = function(element, evt, func) {
+			if (element.addEventListener) {
+				element.addEventListener(evt, func, false);
+			} else {
+				element.attachEvent("on" + evt, func);
+			}
+		};
+		attachEvent(document.body, "ezPageEngageable", function (e) {
+			ezCanEngagePage = true;
+		});
+		attachEvent(document.body, "ezCMPComplete", function (e) {
+			if (typeof(_ezaq) !== "undefined"){
+				__ez.bit.AddAndFire(_ezaq["page_view_id"], [(new __ezDotData('pageview_updated_t_time', Date.now()))]);
+			}
+		});	
+	})();</script>
+<script type="text/javascript">var cmpCookies={};cmpCookies["-1"]=["ezosuigeneris-0=ddb69731bd0df921ceaae521f4d13759; Path=/; Domain=omnisecu.com; Expires=Sun, 23 Oct 2022 14:01:52 UTC; Secure; SameSite=None"];
+cmpCookies["3"]=["ezoadgid_147239=-1; Path=/; Domain=omnisecu.com; Expires=Sat, 23 Oct 2021 14:31:52 UTC","ezoref_147239=; Path=/; Domain=omnisecu.com; Expires=Sat, 23 Oct 2021 16:01:52 UTC","ezoab_147239=mod1; Path=/; Domain=omnisecu.com; Expires=Sat, 23 Oct 2021 16:01:52 UTC","ezopvc_147239=1; Path=/; Domain=omnisecu.com; Expires=Sat, 23 Oct 2021 14:31:52 UTC","ezepvv=0; Path=/; Domain=omnisecu.com; Expires=Sun, 24 Oct 2021 14:01:52 UTC","ezovid_147239=2145277914; Path=/; Domain=omnisecu.com; Expires=Sat, 23 Oct 2021 14:31:52 UTC","lp_147239=https://www.omnisecu.com/tcpip/broadcast-mac-address.php; Path=/; Domain=omnisecu.com; Expires=Sat, 23 Oct 2021 14:31:52 UTC"];
+</script>
+
+<script type="text/javascript">
+var __ezCmpConfig = {
+	version: 4,
+	pageIsEngageable: false,
+	results: {"domain":".omnisecu.com","contentData":{"languages":{"de":"de","en":"en","es":"es","fr":"fr","hr":"hr","it":"it","nl":"nl","sl":"sl","sr":"sr","sv":"sv"},"list":[{"id":106,"did":0,"language":"en","dialogHeading":"This website uses cookies","dialogBody":"This website use cookies to personalize content, provide custom experiences, target ads, to provide social media features and to analyse our traffic. We also share information about your use of our site with our social media, advertising and analytics partners who may combine it with other information that you've provided to them or that they've collected from your use of their services. Below you have the option of selecting which types of cookies you'll allow to store your personal information. To view the vendor list or change consent settings at any time please visit our privacy policy using the link below.","declineButton":"Allow Necessary Cookies \u0026 Continue","acceptButton":"Continue with Recommended Cookies","okButton":"Save","cookieInfo":"Cookies are small text files that can be used by websites to make a user's experience more efficient.\r\n\r\nThe law states that we can store cookies that contain personal information on your device if they are strictly necessary for the operation of this site. For all other types of cookies that contain personal information we need your permission.\r\n\r\nThis site uses different types of cookies. Some cookies are placed by third party services that appear on our pages.","necessaryCategory":"Necessary","necessaryDescription":"Necessary cookies help make a website usable by enabling basic functions like page navigation and access to secure areas of the website. The website cannot function properly without these cookies.                            ","preferenceCategory":"Preferences","preferenceDescription":"Preference cookies enable a website to remember information that changes the way the website behaves or looks, like your preferred language or the region that you are in.","statisticsCategory":"Statistics","statisticsDescription":"Statistic cookies help website owners to understand how visitors interact with websites by collecting and reporting information anonymously.","marketingCategory":"Marketing","marketingDescription":"Marketing cookies are used to track visitors across websites. The intention is to display ads that are relevant and engaging for the individual user and thereby more valuable for publishers and third party advertisers.","unclassifiedCategory":"Unclassified","unclassifiedDescription":"Unclassified cookies are cookies that we are in the process of classifying, together with the providers of individual cookies.","cookieDetailsLink":"Cookie Details","aboutCookiesLink":"About Cookies","privacyPolicyLink":"Privacy Policy","columnName":"Name","columnPurpose":"Purpose","columnPII":"May Contain Personal Information","columnDuration":"Duration","mainHeading":"Privacy \u0026 Transparency","purposes":"Purposes","legitimateInterest":"Legitimate Interest","consent":"Consent","specialPurposes":"Special Purposes","manageSettings":"Manage Settings","saveSettings":"Save Settings \u0026 Exit","vendors":"Vendor List","nonTcfVendors":"Additional Vendors","features":"Features","specialFeatures":"Special Features","acceptAllButton":"Accept All \u0026 Continue","purposePrefix":"We and our partners use cookies to ","stackPrefix":"We and our partners use data for ","mainBody":"An example of data being processed may be a unique identifier stored in a cookie. Some of our partners may process your data as a part of their legitimate business interest without asking for consent. To view the purposes they believe they have legitimate interest for, or to object to this data processing use the vendor list link below. The consent submitted will only be used for data processing originating from this website. If you would like to change your settings or withdraw consent at any time, the link to do so is in our privacy policy accessible from our home page."},{"id":107,"did":0,"language":"fr","dialogHeading":"Ce site web utilise des cookies","dialogBody":"Nous utilisons des cookies pour personnaliser le contenu et les publicités, pour fournir des fonctionnalités de médias sociaux et pour analyser notre trafic. Nous partageons également des informations sur votre utilisation de notre site avec nos partenaires de médias sociaux, de publicité et d'analyse qui peuvent les combiner avec d'autres informations que vous leur avez fournies ou qu'ils ont collectées à partir de votre utilisation de leurs services. S'il vous plaît lire plus sur notre page de politique de confidentialité. Pour consulter la liste des fournisseurs ou modifier les paramètres de consentement à tout moment, veuillez consulter notre politique de confidentialité en utilisant le lien ci-dessous.","declineButton":"Utilisez les cookies nécessaires uniquement et continuez","acceptButton":"Autoriser tous les cookies et continuer","okButton":"D'accord","cookieInfo":"Les cookies sont de petits fichiers texte qui peuvent être utilisés par les sites Web pour rendre l'expérience utilisateur plus efficace.\r\n\r\nLa loi stipule que nous pouvons stocker des cookies sur votre appareil s'ils sont strictement nécessaires au fonctionnement de ce site. Pour tous les autres types de cookies, nous avons besoin de votre permission.\r\n\r\nCe site utilise différents types de cookies. Certains cookies sont placés par des services tiers qui apparaissent sur nos pages.","necessaryCategory":"Nécessaire","necessaryDescription":"Les cookies nécessaires permettent de rendre un site Web utilisable en activant des fonctions de base telles que la navigation dans les pages et l'accès à des zones sécurisées du site Web. Le site Web ne peut pas fonctionner correctement sans ces cookies.","preferenceCategory":"Préférences","preferenceDescription":"Les cookies de préférence permettent à un site Web de mémoriser des informations qui modifient le comportement ou l'aspect du site Web, comme votre langue préférée ou la région dans laquelle vous vous trouvez.","statisticsCategory":"Statistiques","statisticsDescription":"Les cookies statistiques aident les propriétaires de sites Web à comprendre comment les visiteurs interagissent avec les sites Web en collectant et en signalant les informations de manière anonyme.","marketingCategory":"Commercialisation","marketingDescription":"Les cookies de marketing sont utilisés pour suivre les visiteurs sur les sites Web. L'intention est d'afficher des publicités pertinentes et engageantes pour l'utilisateur individuel et donc plus utiles pour les éditeurs et les annonceurs tiers.","unclassifiedCategory":"Non classé","unclassifiedDescription":"Les cookies non classés sont des cookies que nous sommes en train de classer, ainsi que les fournisseurs de cookies individuels.","cookieDetailsLink":"Détails du cookie","aboutCookiesLink":"À propos des cookies","privacyPolicyLink":"Politique de confidentialité","columnName":"Prénom","columnPurpose":"Objectif","columnPII":"Peut contenir des informations personnelles","columnDuration":"Durée","mainHeading":"Confidentialité et Transparence","purposes":"Objectifs","legitimateInterest":"Intérêt Légitime","consent":"Consentement","specialPurposes":"Objectifs Spéciaux","manageSettings":"Gérer les Paramètres","saveSettings":"Enregistrer les Paramètres","vendors":"Liste de Fournisseurs","nonTcfVendors":"Fournisseurs Supplémentaires","features":"Caractéristiques","specialFeatures":"Particularités","acceptAllButton":"Accepter Tout et Continuer","purposePrefix":"Nous et nos partenaires utilisons des cookies pour ","stackPrefix":"Nous et nos partenaires utilisons les données pour ","mainBody":"Un exemple de données traitées peut être un identifiant unique stocké dans un cookie. Certains de nos partenaires peuvent traiter vos données dans le cadre de leurs intérêts commerciaux légitimes sans vous demander votre consentement. Pour connaître les raisons pour lesquelles ils estiment avoir un intérêt légitime ou pour s'opposer à ce traitement de données, utilisez le lien de la liste des fournisseurs ci-dessous. Le consentement soumis ne sera utilisé que pour le traitement des données provenant de ce site web. Si vous souhaitez modifier vos paramètres ou retirer votre consentement à tout moment, le lien pour ce faire se trouve dans notre politique de confidentialité accessible depuis notre page d'accueil."},{"id":108,"did":0,"language":"de","dialogHeading":"Diese Webseite verwendet Cookies","dialogBody":"Um diese Website zu betreiben, ist es für mich notwendig Cookies zu verwenden. Einige Cookies sind erforderlich, um die Funktionalität zu gewährleisten, andere brauche ich für Statistiken und wieder andere helfen mir dabei dir nur die Werbung anzuzeigen, die dich interessiert. Mehr erfährst du in meiner Datenschutzerklärung. ","declineButton":"Nur notwendige Cookies","acceptButton":"Weiter mit den empfohlenen Cookies","okButton":"Speichern","cookieInfo":"Cookies sind kleine Textdateien, die von Websites verwendet werden können, um die Nutzererfahrung effizienter zu gestalten.\n\nDas Gesetz besagt, dass wir Cookies, die persönliche Informationen auf Ihrem Gerät enthalten, speichern können, wenn sie für den Betrieb dieser Website unbedingt erforderlich sind. Für alle anderen Arten von Cookies, die persönliche Informationen enthalten, benötigen wir Ihre Erlaubnis.\n\nDiese Seite verwendet verschiedene Arten von Cookies. Einige Cookies werden von Drittanbietern auf unseren Seiten platziert. ","necessaryCategory":"Notwendig","necessaryDescription":"Notwendige Cookies helfen dabei, eine Website nutzbar zu machen, indem grundlegende Funktionen wie Seitennavigation und Zugriff auf sichere Bereiche der Website aktiviert werden. Die Website kann ohne diese Cookies nicht ordnungsgemäß funktionieren.","preferenceCategory":"Präferenzen","preferenceDescription":"Präferenz-Cookies ermöglichen es einer Website, Informationen zu speichern, die das Verhalten oder das Aussehen der Website ändern, wie z.B. Ihre bevorzugte Sprache oder die Region, in der Sie sich befinden.","statisticsCategory":"Statistiken","statisticsDescription":"Statistische Cookies helfen Website-Betreibern zu verstehen, wie Besucher mit Websites interagieren, indem sie Informationen anonym sammeln und melden.","marketingCategory":"Marketing","marketingDescription":"Marketing-Cookies werden verwendet, um Besucher auf Websites zu verfolgen. Die Absicht besteht darin, relevante und ansprechende Anzeigen für den einzelnen Nutzer anzuzeigen und somit für Publisher und Werbetreibende von Drittanbietern nützlicher zu sein.","unclassifiedCategory":"Nicht klassifiziert","unclassifiedDescription":"Nicht klassifizierte Cookies sind Cookies, die wir gerade klassifizieren, sowie die Lieferanten einzelner Cookies.","cookieDetailsLink":"Details von Cookies","aboutCookiesLink":"Über Cookies","privacyPolicyLink":"Datenschutzerklärung","columnName":"Name","columnPurpose":"Ziel","columnPII":"Kann persönliche Informationen enthalten","columnDuration":"Dauer","mainHeading":"Datenschutz \u0026 Transparenz","purposes":"Verwendungszwecke","legitimateInterest":"Legitimes Interesse","consent":"Consent","specialPurposes":"besondere Verwendungszwecke","manageSettings":"Einstellungen verwalten","saveSettings":"Einstellungen speichern \u0026 Beenden","vendors":"Anbieter-Liste","nonTcfVendors":"Zusätzliche Anbieter","features":"Eigenschaften","specialFeatures":"Besondere Eigenschaften","acceptAllButton":"Alle akzeptieren \u0026 fortfahren","purposePrefix":"Wir und unsere Partner verwenden Cookies, um","stackPrefix":"Wir und unsere Partner verwenden Daten für","mainBody":"Ein Beispiel für Daten, welche verarbeitet werden, kann eine in einem Cookie gespeicherte eindeutige Kennung sein. Einige unserer Partner können Ihre Daten im Rahmen ihrer legitimen Geschäftsinteressen verarbeiten, ohne Ihre Zustimmung einzuholen. Um die Verwendungszwecke einzusehen, für die diese ihrer Meinung nach ein berechtigtes Interesse haben, oder um dieser Datenverarbeitung zu widersprechen, verwenden Sie den unten stehenden Link zur Anbieterliste. Die übermittelte Einwilligung wird nur für die von dieser Webseite ausgehende Datenverarbeitung verwendet. Wenn Sie Ihre Einstellungen ändern oder Ihre Einwilligung jederzeit widerrufen möchten, finden Sie den Link dazu in unserer Datenschutzerklärung, die von unserer Homepage aus zugänglich ist"},{"id":1528,"did":0,"language":"es","dialogHeading":"Este sitio web utiliza cookies","dialogBody":"Este sitio web utiliza cookies para personalizar el contenido, proporcionar experiencias personalizadas, mostrar anuncios, proporcionar características de redes sociales y analizar nuestro tráfico. También compartimos información sobre su uso en nuestro sitio con nuestros socios de redes sociales, publicidad y análisis que pueden combinarlo con otra información que les haya proporcionado o que hayan recopilado sobre el uso de sus servicios. A continuación, tiene la opción de seleccionar qué tipos de cookies permitirá que almacenen su información personal. Para ver la lista de proveedores o cambiar la configuración de consentimiento en cualquier momento, visite nuestra \"Política de privacidad\" utilizando el siguiente enlace.","declineButton":"Permitir las Cookies Necesarias y Continuar","acceptButton":"Continuar con las Cookies Recomendadas","okButton":"Guardar","cookieInfo":"Las cookies son pequeños archivos de texto que los sitios web pueden usar para hacer que la experiencia del usuario sea más eficiente.\nLa ley establece que podemos almacenar cookies que contienen información personal en su dispositivo si son estrictamente necesarias para el funcionamiento de este sitio. Para todos los demás tipos de cookies que contienen información personal, necesitamos su permiso.\nEste sitio utiliza diferentes tipos de cookies. Algunas cookies son colocadas por servicios de terceros que aparecen en nuestras páginas.","necessaryCategory":"Necesarias","necessaryDescription":"Las cookies necesarias ayudan a que un sitio web sea utilizable al habilitar funciones básicas como la navegación de páginas y el acceso a áreas seguras del sitio web. El sitio web no puede funcionar correctamente sin estas cookies.","preferenceCategory":"Preferencias","preferenceDescription":"Las cookies de preferencias, permiten que un sitio web guarde la información que modifica, la forma en que se comporta o se ve el sitio web, así como, su idioma preferido o la región en la que se encuentra.","statisticsCategory":"Estadísticas","statisticsDescription":"Las cookies de estadísticas ayudan a los propietarios de los sitios web, a comprender cómo los visitantes interactúan con los sitios mediante la recolección y reporte de información anónima.","marketingCategory":"Mercadeo","marketingDescription":"Las cookies de mercadeo se utilizan para seguir a los visitantes en los sitios web. La intención es mostrar anuncios que sean relevantes y atractivos para el usuario y, por tanto, más valiosos para editores y anunciantes externos.","unclassifiedCategory":"Sin clasificación","unclassifiedDescription":"Las cookies no clasificadas son cookies que estamos en proceso de clasificar, junto con los proveedores de cookies individuales.","cookieDetailsLink":"Detalles de Cookies","aboutCookiesLink":"Acerca de las Cookies","privacyPolicyLink":"Enlace de políticas de privacidad","columnName":"Nombre","columnPurpose":"Propósito","columnPII":"Puede contener información personal","columnDuration":"Duración","mainHeading":"Privacidad y transparencia","purposes":"Propósitos","legitimateInterest":"Interés legítimo","consent":"Consentimiento","specialPurposes":"Fines especiales","manageSettings":"Administrar configuración","saveSettings":"Guardar configuración y salir","vendors":"Lista de proveedores","nonTcfVendors":"Proveedores adicionales","features":"Funciones","specialFeatures":"Funciones especiales","acceptAllButton":"Aceptar todo y continuar","purposePrefix":"Nosotros y nuestros socios utilizamos cookies para ","stackPrefix":"Nosotros y nuestros socios usamos datos para ","mainBody":"Un ejemplo de datos procesados ​​puede ser un identificador único almacenado en una cookie. Algunos de nuestros socios pueden procesar sus datos como parte de su interés comercial legítimo sin solicitar su consentimiento. Para ver los propósitos que creen que tienen interés legítimo u oponerse a este procesamiento de datos, utilice el enlace de la lista de proveedores a continuación. El consentimiento enviado solo se utilizará para el procesamiento de datos que tienen su origen en este sitio web. Si desea cambiar su configuración o retirar el consentimiento en cualquier momento, el enlace hacerlo está en nuestra política de privacidad accesible desde nuestra página de inicio."},{"id":1715,"did":0,"language":"it","dialogHeading":"questo sito usa i cookie","dialogBody":"Questo sito web utilizza i cookie per personalizzare i contenuti, fornire esperienze personalizzate, annunci mirati, fornire funzionalità di social media e analizzare il nostro traffico. Condividiamo anche informazioni sull'utilizzo del nostro sito con i nostri partner di social media, pubblicità e analisi che possono combinare con altre informazioni che avete fornito loro o che hanno raccolto dall'utilizzo dei loro servizi da parte vostra. Di seguito avete la possibilità di selezionare quali tipi di cookie consentite di memorizzare le vostre informazioni personali. Per visualizzare l'elenco dei fornitori o modificare le impostazioni di consenso in qualsiasi momento, visitate la nostra politica sulla privacy utilizzando il link sottostante","declineButton":"accettare necessario","acceptButton":"accetta tutto e continua","okButton":"accetta","cookieInfo":"I cookie sono piccoli file di testo che possono essere utilizzati dai siti web per rendere più efficiente l'esperienza dell'utente. La legge afferma che possiamo memorizzare i cookie che contengono informazioni personali sul tuo dispositivo se sono strettamente necessari per il funzionamento di questo sito. Per tutti gli altri tipi di cookie che contengono informazioni personali abbiamo bisogno della tua autorizzazione. Questo sito utilizza diversi tipi di cookie. Alcuni cookie sono inseriti da servizi di terze parti che compaiono sulle nostre pagine.","necessaryCategory":"necessario","necessaryDescription":"I cookie di preferenza consentono ad un sito web di memorizzare informazioni che cambiano il modo in cui il sito web si comporta o il suo aspetto, come la lingua preferita, o la regione in cui ci si trova","preferenceCategory":"preferenze","preferenceDescription":"I cookie di preferenza consentono a un sito web di ricordare le informazioni che cambiano il modo in cui il sito web si comporta o appare, come la tua lingua preferita o la regione in cui ti trovi.","statisticsCategory":"statistiche","statisticsDescription":"I cookie statistici aiutano i proprietari dei siti web a capire come i visitatori interagiscono con i siti raccogliendo e trasmettendo informazioni in forma anonima.","marketingCategory":"marketing","marketingDescription":"I cookie per il marketing vengono utilizzati per tracciare i visitatori dei siti web. L'intenzione è quella di visualizzare annunci che siano rilevanti e coinvolgenti per il singolo utente e quindi di maggior valore per gli editori e gli inserzionisti di terze parti","unclassifiedCategory":" ","unclassifiedDescription":" ","cookieDetailsLink":"dettagli cookie","aboutCookiesLink":"informazioni sui cookie","privacyPolicyLink":"informativa sulla privacy","columnName":" ","columnPurpose":" ","columnPII":" ","columnDuration":" ","mainHeading":"privacy e trasparenza","purposes":"finalita","legitimateInterest":"interesse legittimo","consent":"consentire","specialPurposes":"scopi specifici","manageSettings":"gestire le impostazioni","saveSettings":"accetta","vendors":"lista dei fornitori","nonTcfVendors":"fornitori aggiuntivi","features":"caratteristiche","specialFeatures":"caratteristiche speciali","acceptAllButton":"accetta tutto e continua","purposePrefix":"Noi e i nostri partner utilizziamo i cookie per","stackPrefix":"Noi e i nostri partner utilizziamo i cookie per","mainBody":"Un esempio di trattamento dei dati può essere un identificatore univoco memorizzato in un cookie. Alcuni dei nostri partner possono trattare i vostri dati come parte del loro legittimo interesse commerciale senza chiedere il consenso. Per visualizzare le finalità per le quali ritengono di avere un interesse legittimo o per opporsi a questo trattamento dei dati, utilizzare il link della lista dei fronitori qui sotto. Il consenso fornito sarà utilizzato solo per il trattamento dei dati provenienti da questo sito web. Se si desidera modificare le impostazioni o non dare il consenso in qualsiasi momento, il link per farlo è nella nostra politica sulla privacy accessibile dalla nostra home page"},{"id":2121,"did":0,"language":"hr","dialogHeading":"Ovo web-mjesto upotrebljava kolačiće.","dialogBody":"Ovo web-mjesto koristi kolačiće za prilagodbu sadržaja, pružanje prilagođenih iskustava, ciljanje oglasa, pružanje značajki društvenih mreža i analizu našeg prometa. Također dijelimo informacije o vašoj upotrebi naše stranice s našim društvenim mrežama, oglašivačkim i analitičkim partnerima koji ih mogu kombinirati s ostalim informacijama koje ste im pružili ili koje su prikupili iz vašeg korištenja njihovim uslugama. Niže u tekstu nalazi se mogućnost odabira vrsta kolačića kojima ćete dopustiti pohranu vaših osobnih podataka. Da biste u bilo kojem trenutku pregledali popis dobavljača ili promijenili postavke privole, posjetite našu politiku privatnosti putem donje poveznice.","declineButton":"Omogući nužne kolačiće i nastavi","acceptButton":"Nastavi s preporučenim kolačićima","okButton":"Spremi","cookieInfo":"Kolačići su male tekstualne datoteke koje web-mjesta mogu upotrebljavati za učinkovitije korisničko iskustvo.\n\nZakonom je propisano da na vaš uređaj možemo pohraniti kolačiće koji sadrže osobne podatke ako su oni nužno potrebni za rad ove stranice. Za sve ostale vrste kolačića koji sadrže osobne podatke trebamo vaše dopuštenje.\n\nOva stranica upotrebljava različite vrste kolačića. Neke kolačiće postavljaju usluge trećih strana koje se pojavljuju na našim stranicama.","necessaryCategory":"Nužni kolačići","necessaryDescription":"Nužni kolačići pomažu da se web-mjesto učini korisnim omogućavanjem osnovnih funkcija poput navigacije stranicom i pristupa sigurnim dijelovima web-mjesta. Web-mjesto ne može ispravno funkcionirati bez ovih kolačića.","preferenceCategory":"Kolačići preferencija","preferenceDescription":"Kolačići preferencija omogućuju web-mjestu da pamti informacije koje mijenjaju način ponašanja ili izgleda web-mjesta, poput željenog jezika ili regije u kojoj se nalazite.","statisticsCategory":"Statistički kolačići","statisticsDescription":"Statistički kolačići pomažu vlasnicima web-mjesta da razumiju interakciju između posjetitelja i web-mjesta anonimnim prikupljanjem i izvješavanjem o informacijama.","marketingCategory":"Marketinški kolačići","marketingDescription":"Marketinški kolačići upotrebljavaju se za praćenje posjetitelja na web-mjestima. Namjera je prikazati oglase koji su relevantni i zanimljivi pojedinačnom korisniku te stoga vrjedniji izdavačima i oglašivačima trećih strana.","unclassifiedCategory":"Neklasificirani kolačići","unclassifiedDescription":"Neklasificirani kolačići su kolačići koje u tom trenutku klasificiramo, zajedno s pružateljima pojedinačnih kolačića.","cookieDetailsLink":"Detalji kolačića","aboutCookiesLink":"O kolačićima","privacyPolicyLink":"Politika privatnosti","columnName":"Naziv","columnPurpose":"Svrha","columnPII":"Mogu sadržavati osobne informacije","columnDuration":"Trajanje","mainHeading":"Privatnost i transparentnost","purposes":"Svrhe","legitimateInterest":"Legitiman interes","consent":"Privola","specialPurposes":"Posebne svrhe","manageSettings":"Upravljanje postavkama","saveSettings":"Spremi postavke i izađi","vendors":"Popis dobavljača","nonTcfVendors":"Dodatni dobavljači","features":"Značajke","specialFeatures":"Posebne značajke","acceptAllButton":"Prihvati sve i nastavi","purposePrefix":"Mi i naši partneri upotrebljavamo kolačiće za","stackPrefix":"Mi i naši partneri upotrebljavamo podatke za","mainBody":"Primjer podataka koji se obrađuju može biti jedinstveni identifikator pohranjen u kolačiću. Neki naši partneri mogu obrađivati vaše podatke kao dio svojeg legitimnog poslovnog interesa bez traženja privole. Da biste vidjeli svrhe za koje partneri smatraju da imaju legitimni interes ili se usprotivili ovoj obradi podataka, upotrijebite donju poveznicu na popis dobavljača. Poslana privola koristit će se samo za obradu podataka koji potječu s ovog web-mjesta. Ako u bilo kojem trenutku želite promijeniti svoje postavke ili povući privolu, poveznica za to nalazi se u našoj politici privatnosti dostupnoj na našoj početnoj stranici."},{"id":2125,"did":0,"language":"sv","dialogHeading":"Den här hemsidan använder sig av cookies","dialogBody":"Denna webbplats använder cookies för att anpassa innehåll, tillhandahålla anpassade upplevelser, rikta annonser, för att tillhandahålla sociala mediefunktioner och för att analysera trafiken. Vi delar också information om din användning av vår webbplats med våra sociala medier, reklam- och analyspartner som kan kombinera den med annan information som du har gett dem eller som de har samlat in från din användning av deras tjänster. Nedan har du möjlighet att välja vilka typer av cookies du tillåter för att lagra din personliga information. För att se leverantörslistan eller ändra samtyckeinställningar när som helst, besök vår integritetspolicy med länken nedan.","declineButton":"Till nödvändiga cookies och fortsätt","acceptButton":"Fortsätt med rekommenderade cookies","okButton":"Spara","cookieInfo":"Cookies är små textfiler som kan användas av webbplatser för att effektivisera användarens upplevelse. \n\nEnligt lag kan vi spara cookies som innehåller personlig information på din enhet om de är absolut nödvändiga för driften av denna webbplats. För alla andra typer av cookies som innehåller personlig information behöver vi din tillåtelse. \n\nDenna webbplats använder olika typer av cookies. Vissa cookies placeras av tjänster från tredje part som visas på våra sidor.","necessaryCategory":"Nödvändiga","necessaryDescription":"Nödvändiga cookies hjälper till att göra en webbplats användbar genom att möjliggöra grundläggande funktioner som sidnavigering och åtkomst till säkra områden på webbplatsen. Webbplatsen kan inte fungera korrekt utan dessa cookies.","preferenceCategory":"Inställningar","preferenceDescription":"Nödvändiga cookies hjälper till att göra en webbplats användbar genom att aktivera grundläggande funktioner som sidnavigering och tillgång till säkra områden på webbplatsen. Webbplatsen kan inte fungera korrekt utan dessa cookies.","statisticsCategory":"Statistik","statisticsDescription":"Cookies för statistik hjälper en webbplatsägare att förstå hur besökare interagerar med webbplatser genom att samla och rapportera in information anonymt.","marketingCategory":"Marknadsföring","marketingDescription":"Cookies för marknadsföring används för att spåra besökare på webbplatser. Avsikten är att visa annonser som är relevanta och engagerande för enskilda användare, och därmed mer värdefull för utgivare och tredjepartsannonsörer.","unclassifiedCategory":"Oklassifierade","unclassifiedDescription":"Oklassificerade cookies är cookies som ännu inte har klassificerats, dessa håller vi på att klassificera tillsammans med leverantörerna av leverantörerna av dessa cookies.","cookieDetailsLink":"Cookie detaljer","aboutCookiesLink":"Om Cookies","privacyPolicyLink":"Integritetspolicy","columnName":"Namn","columnPurpose":"Syfte","columnPII":"Kan innehålla personlig information","columnDuration":"Varaktighet","mainHeading":"Sekretess och transparens","purposes":"Syften","legitimateInterest":"Legitima intressen","consent":"Samtycke","specialPurposes":"Särskilda ändamål","manageSettings":"Hantera inställningar","saveSettings":"Spara inställningar och avsluta","vendors":"Leverantörs lista","nonTcfVendors":"Ytterligare leverantörer","features":"Funktioner","specialFeatures":"Speciella funktioner","acceptAllButton":"Acceptera alla och fortsätt","purposePrefix":"Vi och våra partners använder cookies för att","stackPrefix":"Vi och våra partners använder data för","mainBody":"Ett exempel på data som samlas in kan vara en unik identifierare lagrad i en cookie. Vissa av våra partners kan behandla dina uppgifter som en del av deras legitima affärsintresse utan att fråga om samtycke. För att se ändamålen som de anser att de har ett berättigat intresse för, eller för att invända mot denna databehandling, använder du länken för leverantörslistan nedan. Det samtycke som lämnas kommer endast att användas för databehandling som härrör från denna webbplats. Du kan när som helst ändra dina inställningar eller återkalla ditt samtycke genom länken som finns i vår integritetspolicy, vilken är tillgänglig på vår hemsida."},{"id":2126,"did":0,"language":"sr","dialogHeading":"Ова веб страница користи колачиће","dialogBody":"На овој веб страници користимо колачиће да бисмо персонализовали садржину, пружили прилагођена корисничка искуства, приказали огласе за циљану публику, омогућили одређене карактеристике друштвених мрежа и анализирали промет на нашој страници. Такође, податке о вашем коришћењу наше веб странице делимо са нашим партнерима за друштвене мреже, оглашавање и анализу, а они би их могли комбиновати са другим подацима које сте им пружили или које су сакупили док сте користили њихове услуге. У продужетку вам нудимо могућност избора врсте колачића којим ћете дозволити похрану ваших личних података. Да бисте могли у било ком тренутку прегледати попис добављача или променити поставке сагласности, помоћу следеће повезнице приступите нашим Правилима о заштити приватности.","declineButton":"Прихвати нужне колачиће и продужи","acceptButton":"Продужи са препорученим колачићима","okButton":"Спреми","cookieInfo":"Колачићи су мале текстуалне датотеке које се користе на интернет страницама да би се унапредило корисничко искуство.\n \n Законом је дозвољено спремање колачића који садрже личне податке на ваш уређај ако су они изричито потребни за рад ове странице. За све остале врсте колачића које садрже личне податке потребна нам је ваша дозвола.\n \n На овој веб страници користимо различите врсте колачића. Неки колачићи постављају услуге трећих страна које се приказују на нашим страницама.","necessaryCategory":"Нужни","necessaryDescription":"Нужни колачићи омогућавају коришћење веб странице тако да омогућавају основне функције, као што су навигација страницом и приступ безбедним подручјима на страници. Исправан рад веб странице није могућ без тих колачића.","preferenceCategory":"Преферирани","preferenceDescription":"Преферирани колачићи омогућавају веб страници да упамти податке који мењају начин рада или изглед веб странице, као што су преферирани језик или регион у ком се налазите.","statisticsCategory":"Статистички","statisticsDescription":"Статистички колачићи помажу власницима веб страницама да разумеју како посетиоци употребљавају интернет страницу и то тако да анонимно сакупљају и извештавају о подацима.","marketingCategory":"Маркетиншки","marketingDescription":"Маркетиншки колачићи се користе за бележење броја посетиоца на интернет страницама. Циљ је приказивање огласа који интересују и привлаче индивидуалног корисника и који су због тога вреднији издавачима и оглашивачима трећих страна.","unclassifiedCategory":"Некласификовани","unclassifiedDescription":"Некласификовани колачићи су колачићи који су, са појединим колачићима пружаоца улуге, у поступку класификовања.","cookieDetailsLink":"Подаци о колачићима","aboutCookiesLink":"Више података о колачићима","privacyPolicyLink":"Правила о заштити приватности","columnName":"Назив","columnPurpose":"Сврха","columnPII":"Може да садржи личне податке","columnDuration":"Трајање","mainHeading":"Приватност и транспарентност","purposes":"Сврхе","legitimateInterest":"Легитимни интерес","consent":"Сагласност","specialPurposes":"Посебне сврхе","manageSettings":"Управљање поставкама","saveSettings":"Спреми поставке и изађи","vendors":"Попис добављача","nonTcfVendors":"Додатни добављачи","features":"Карактеристике","specialFeatures":"Посебне карактеристике","acceptAllButton":"Прихвати све и продужи","purposePrefix":"Ми и наши партнери користимо колачиће за","stackPrefix":"Ми и наши партнери користимо податке за","mainBody":"Подаци који се обрађују могу да представљају јединствени идентификатор похрањен у колачићу. Неки од наших партнера могу да обрађују ваше податке као део свог легитимног пословног интереса без тражења сагласности. Да бисте прегледали сврхе за које партнери наводе да имају легитимни интерес или да бисте уложили приговор на такву обраду података, погледајте попис добављача у продужетку. Предана сагласност користиће се само за обраду података који потичу са ове веб странице. Ако у било ком тренутку одлучите да промените поставке или да повучете сагласност, то можете да учините помоћу повезнице у нашим правилима о заштити приватности којим можете да приступите са наше насловне странице."},{"id":2127,"did":0,"language":"sl","dialogHeading":"Ta spletna stran uporablja piškotke","dialogBody":"Na tej spletni strani uporabljamo piškotke za personalizirane vsebine, zagotavljanje prilagojenih uporabniških izkušenj, prikazovanje oglasov za ciljne skupine, omogočanje določenih funkcij družbenih omrežij in analizo prometa na naši spletni strani. Podatke o vaši uporabi naše spletne strani delimo tudi z našimi partnerji za družabna omrežja, oglaševanje in analizo, ki jih lahko kombinirajo z drugimi informacijami, ki ste jih posredovali ali zbrali med uporabo njihovih storitev. V nadaljevanju vam ponujamo možnost izbire vrste piškotkov, s katerimi dovoljujete shranjevanje vaših osebnih podatkov. Če želite kadar koli pregledati seznam ponudnikov ali spremeniti nastavitve privolitve, uporabite naslednjo povezavo za dostop do naših pravil o varstvu zasebnosti.","declineButton":"Strinjam se","acceptButton":"Nadaljujte s priporočenimi piškotki","okButton":"Shrani","cookieInfo":"Piškotek je majhna tekstovna datoteka, ki se uporablja na spletnih straneh za izboljšanje uporabniške izkušnje.\n \n Zakon dovoljuje shranjevanje piškotkov, ki vsebujejo osebne podatke, če je to izrecno potrebno za delovanje te strani. Za vse druge vrste piškotkov, ki vsebujejo osebne podatke, potrebujemo vaše dovoljenje.\n \n Na tej spletni strani uporabljamo različne vrste piškotkov. Nekateri piškotki opredeljujejo storitve tretjih oseb, ki so prikazane na naših spletnih straneh.","necessaryCategory":"Nujni","necessaryDescription":"Nujni piškotki omogočajo uporabo spletne strani, tako da omogočajo osnovne funkcije, kot so navigacija po spletišču in dostop do varnih delov spletišča. Brez teh piškotkov ni možno zagotoviti pravilno delovanje spletne strani.","preferenceCategory":"Prednostni","preferenceDescription":"Prednostni piškotki omogočajo spletni strani, da si zapomni informacije, ki spreminjajo način delovanja ali izgleda, kot je vaš želeni jezik ali regija, v kateri se nahajate.","statisticsCategory":"Statistični","statisticsDescription":"Statistični piškotki lastnikom spletnih strani pomagajo razumeti, kako obiskovalci uporabljajo spletno stran z anonimnim zbiranjem in poročanjem podatkov.","marketingCategory":"Marketinški","marketingDescription":"Marketinški piškotki se uporabljajo za spremljanje obiskovalcev skozi spletne strani. Namen je prikazovanje oglasov, ki so relevantni za določenega uporabnika in ga spodbujajo k sodelovanju, kar je pomembno za založnike in oglaševalce tretjih oseb.","unclassifiedCategory":"Nerazvrščeni","unclassifiedDescription":"Nerazvrščeni piškotki so piškotki, ki jim bomo skupaj s ponudniki posameznih piškotkov počasi razvrstili.","cookieDetailsLink":"Informacije o piškotkih","aboutCookiesLink":"Več informacij o piškotkih","privacyPolicyLink":"Pravila o varstvu zasebnosti","columnName":"Ime","columnPurpose":"Namen","columnPII":"Lahko vsebuje osebne podatke","columnDuration":"Trajanje delovanja","mainHeading":"Zasebnost in preglednost","purposes":"Namen","legitimateInterest":"Legitimni interes","consent":"Privolitev","specialPurposes":"Poseben namen","manageSettings":"Upravljanje nastavitev","saveSettings":"Shrani nastavitve in zapri","vendors":"Seznam ponudnikov","nonTcfVendors":"Dodatni ponudniki","features":"Značilnosti","specialFeatures":"Posebne značilnosti","acceptAllButton":"Sprejmi vse in nadaljuj","purposePrefix":"Mi in naši partnerji uporabljamo piškotke za","stackPrefix":"Mi in naši partnerji uporabljamo podatke za","mainBody":"Podatki, ki se obdelujejo, lahko predstavljajo edinstveni identifikator, ki je shranjen v piškotku. Nekateri naši partnerji lahko obdelujejo vaše podatke brez privolitve kot del svojega legitimnega poslovnega interesa. Če želite pregledati namene, za katere partnerji izjavijo, da imajo legitimen interes, ali da bi vložili ugovor takšni obdelavi podatkov, si oglejte seznam ponudnikov v nadaljevanju. Dana privolitev se bo uporabljala samo za obdelavo podatkov, ki izvirajo s te spletne strani. Če se odločite kadar koli spremeniti svoje nastavitve ali umakniti privolitev, lahko to storite s povezavo v naših pravilih o varstvu zasebnosti, do katerih lahko dostopate z naše domače strani."},{"id":2128,"did":0,"language":"nl","dialogHeading":"Deze website gebruikt cookies","dialogBody":"Deze website gebruikt cookies om inhoud te personaliseren, aangepaste ervaringen aan te bieden, advertenties te targeten, om functies voor sociale media aan te bieden en om ons verkeer te analyseren. We delen ook informatie over uw gebruik van onze site met onze sociale media-, advertentie- en analysepartners die deze kunnen combineren met andere informatie die u aan hen heeft verstrekt of die zij hebben verzameld door uw gebruik van hun diensten. Hieronder kunt u selecteren welke soorten cookies u toestaat om uw persoonlijke gegevens op te slaan. Als u de leverancierslijst wilt bekijken of de toestemmingsinstellingen op elk gewenst moment wilt wijzigen, gaat u naar ons privacybeleid via de onderstaande link.","declineButton":"Enkel noodzakelijke cookies toestaan","acceptButton":"Ga verder met aanbevolen cookies","okButton":"Opslaan","cookieInfo":"Cookies zijn kleine tekstbestanden die door websites kunnen worden gebruikt om de gebruikerservaring efficiënter te maken.\n\nDe wet stelt dat we cookies die persoonlijke informatie bevatten op uw apparaat kunnen opslaan als ze strikt noodzakelijk zijn voor de werking van deze site. Voor alle andere soorten cookies die persoonlijke informatie bevatten, hebben we uw toestemming nodig.\n\nDeze site gebruikt verschillende soorten cookies. Sommige cookies worden geplaatst door diensten van derden die op onze pagina's verschijnen.","necessaryCategory":"Noodzakelijk","necessaryDescription":"Noodzakelijke cookies helpen een website bruikbaar te maken door basisfuncties zoals paginanavigatie en toegang tot beveiligde delen van de website mogelijk te maken. Zonder deze cookies kan de website niet naar behoren functioneren.","preferenceCategory":"Voorkeuren","preferenceDescription":"Met voorkeurscookies kan een website informatie onthouden die de manier waarop de website zich gedraagt of eruit ziet verandert, zoals de taal van uw voorkeur of de regio waarin u zich bevindt.","statisticsCategory":"Statistieken","statisticsDescription":"Statistische cookies helpen website-eigenaren om te begrijpen hoe bezoekers omgaan met websites door anoniem informatie te verzamelen en te rapporteren.","marketingCategory":"Marketing","marketingDescription":"Marketingcookies worden gebruikt om bezoekers op verschillende websites te volgen. Het is de bedoeling advertenties weer te geven die relevant en aantrekkelijk zijn voor de individuele gebruiker en daardoor waardevoller zijn voor uitgevers en externe adverteerders.","unclassifiedCategory":"Niet geclassificeerd","unclassifiedDescription":"Niet-geclassificeerde cookies zijn cookies die we aan het classificeren zijn, samen met de aanbieders van individuele cookies.","cookieDetailsLink":"Cookie Details","aboutCookiesLink":"Over Cookies","privacyPolicyLink":"Privacy Policy","columnName":"Naam","columnPurpose":"Doel","columnPII":"Kan persoonlijke informatie bevatten","columnDuration":"Duur","mainHeading":"Privacy \u0026 Transparantie","purposes":"Doeleinden","legitimateInterest":"Gerechtvaardigd belang ","consent":"Toestemming","specialPurposes":"Speciale doeleinden","manageSettings":"Instellingen beheren","saveSettings":"Instellingen opslaan \u0026 Afsluiten","vendors":"Leverancierslijst","nonTcfVendors":"Bijkomende Leveranciers","features":"Kenmerken","specialFeatures":"Speciale kenmerken","acceptAllButton":"Accepteer alles en ga door","purposePrefix":"Wij en onze partners gebruiken cookies om","stackPrefix":"Wij en onze partners gebruiken gegevens voor","mainBody":"Een voorbeeld van de gegevens die worden verwerkt, kan een unieke identificatie zijn die in een cookie is opgeslagen. Sommige van onze partners kunnen uw gegevens verwerken als onderdeel van hun legitieme zakelijke belang zonder toestemming te vragen. Gebruik de onderstaande link met de leverancierslijst om te zien voor welke doeleinden zij denken dat ze een gerechtvaardigd belang hebben, of om bezwaar te maken tegen deze gegevensverwerking. De verstrekte toestemming wordt alleen gebruikt voor gegevensverwerking die afkomstig is van deze website. Als u uw instellingen wilt wijzigen of uw toestemming op enig moment wilt intrekken, vindt u de link om dit te doen in ons privacybeleid dat toegankelijk is vanaf onze startpagina."}]},"settings":{"DomainSettingId":3384,"DomainId":147239,"defaultLanguage":"en","IsDialogEnabled":true,"IsOrigDialogEnabled":false,"IsMinorContent":false,"IsTCF2":false,"IsAMPDialogEnabled":false,"AutoDetectLanguage":true,"IsThirdParty":false,"IsWorldWide":false,"IsIabLspaSignatory":false,"ShowAcceptNecessaryButton":false,"ShowCategoryCheckboxes":false,"dialogAccentColor":"#5fa625","dialogBackgroundColor":"#ffffff","dialogTextColor":"#000000","checkedConsentBoxes":"preference,statistics","country":"","IsCCPAFooterEnabled":true,"ccpaBannerPosition":"bottom","AltConsentEnabled":true,"hasNoConsentPage":false,"HasDynamicCookieRegex":false},"vendors":{"vendorList":null},"ezCMP":"ezCMPCookieConsent","ckLength":365,"cmpAllCookies":null,"cmpCookieTranslations":null,"privacy":"https://www.omnisecu.com/privacy-policy.php"},
+	styles: '#ez-cookie-dialog-wrapper {width: 100% !important;height: 100% !important;margin: 0 auto !important;position: fixed !important;top: 0 !important;left: 0 !important;background-color: rgba(0, 0, 0, 0.5) !important;font-family: Arial, serif !important;z-index: 2000000000 !important;overflow-y: auto !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-cookie-table-box {overflow-y: auto !important;max-height: 150px !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog .select-wrapper span, #ez-cookie-dialog-wrapper #ez-cookie-dialog .select-wrapper ul, #ez-cookie-dialog-wrapper #ez-cookie-dialog .select-wrapper input {display: none !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog {display: block !important;position: relative !important;opacity: 1 !important;visibility: visible !important;margin: 150px auto 0 !important;width: 650px !important;-webkit-box-sizing: content-box !important;-moz-box-sizing: content-box !important;box-sizing: content-box !important;max-width: 90% !important;background: {background_color}!important;padding: 12px 24px !important;overflow: hidden !important;z-index: 2000000000 !important;border: 10px solid {accent_color}!important;box-shadow: #333 1px 1px 10px 1px !important;line-height: 1.2 !important;text-align: left !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog h2 {font-size: 20px !important;line-height: 16px !important;font-weight: 700 !important;margin: 10px 0 16px !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog p {margin: 12px 0 !important;line-height: 16px !important;text-indent: 0 !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog button {line-height: 16px !important;text-transform: none !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog select, #ez-cookie-dialog-wrapper #ez-cookie-dialog input {display: inline-block !important;position: relative !important;opacity: 1 !important;margin: 3px !important;font-size: 13px !important;color: {text_color};background-color: {background_color}!important;width: initial !important;padding: 0 !important;border: 1px solid {accent_color}!important;border-radius: 0 !important;height: initial !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog a, #ez-cookie-dialog-wrapper #ez-cookie-dialog p, #ez-cookie-dialog-wrapper #ez-cookie-dialog h2, #ez-cookie-dialog-wrapper #ez-cookie-dialog button {color: {text_color}!important;font-style: normal !important;text-decoration: none !important;font-variant: normal !important;font-family: Arial, serif !important;box-shadow: none !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog p, #ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-cookie-details-description, #ez-cookie-dialog-wrapper #ez-cookie-dialog button {font-weight: 400 !important;font-size: 10pt !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-cookie-details-description {padding: 10px 0 5px !important;color: {text_color}!important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-cookie-details {height: 34px !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-cookie-details, #ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-about-cookies {display: table-cell !important;color: {accent_color}!important;vertical-align: bottom !important;position: relative !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-cookie-details:after {width: 0px !important;height: 0px !important;border-left: 4px solid transparent !important;border-right: 4px solid transparent !important;border-top: 4px solid {accent_color}!important;content: "" !important;position: absolute !important;right: -14px !important;bottom: 6px !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-cookie-details.open:after {border-bottom: 4px solid {accent_color}!important;border-top: 0 solid transparent !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-about-cookies-text {display: none !important;margin-top: 12px !important;text-align: left !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-necessary-cookies {border: none !important;font-family: Arial, serif !important;color: #ffffff !important;background: #333333 !important;padding: 10px 20px 10px 20px !important;text-decoration: none !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-necessary-cookies:hover {cursor: pointer !important;background: #111111 !important;text-decoration: none !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-all-cookies {border: none !important;font-family: Arial, serif !important;color: {accept_button_text_color}!important;background: {accent_color}!important;padding: 10px 20px 10px 20px !important;text-decoration: none !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-all-cookies:hover {cursor: pointer !important;background: {accent_color}!important;text-decoration: none !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #privacy-link {font-size: 12px !important;display: block !important;margin-top: 20px !important;text-decoration: underline !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-ok-cookies {border: 1px solid {background_color}!important;font-family: Arial, serif !important;font-size: 9pt !important;color: {text_color}!important;background: {background_color}!important;padding: 5px 15px !important;text-decoration: none !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-ok-cookies:hover {cursor: pointer !important;background: {background_color}!important;text-decoration: none !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-about-cookies-container {margin: 32px auto 12px !important;width: 100% !important;display: none !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog a {color: {accent_color}!important;text-decoration: none !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #privacy {text-align: right !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-cookie-options {display: flex !important;flex-direction: row !important;margin: 12px 0 !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-cookie-details-container {display: none !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog .ez-cookie-option {flex: 1 !important;font-family: Arial, serif !important;font-size: 9pt !important;display: block !important;line-height: 26px !important;color: {text_color}!important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog .ez-cookie-option label {cursor: pointer !important;font-size: 12px !important;color: {text_color}!important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-cookie-table {max-width: 525px !important;width: 525px !important;margin-top: 12px !important;font-family: Arial, serif !important;border-spacing: 1px !important;font-size: 8pt !important;border-collapse: separate !important;background-color: {background_color}!important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-cookie-table th {background-color: {background_color}!important;color: {text_color}!important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #button-row {display: flex !important;flex-wrap: nowrap !important;justify-content: space-between !important;margin-right: 10px !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #secondary-links {display: flex !important;font-size: 12px !important;margin-top: 20px !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #secondary-links .bar {margin: 0 5px !important;width:auto!important;height:auto!important;position:relative!important;background:0 0!important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-cookie-table td {background-color: {background_color}!important;font-size: 8pt !important;width: 30% !important;-ms-word-break: break-word !important;word-break: break-word !important;color: {text_color}!important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-cookie-table td:nth-child(1) {width: 30% !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-cookie-table td:nth-child(2) {width: 50% !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-cookie-table td:nth-child(3) {width: 20% !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-cookie-table th, #ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-cookie-table td {text-align: left !important;padding: 3px !important;vertical-align: top !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog .ez-cookie-option input {vertical-align: middle !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-cookie-language {position: absolute !important;top: 10px !important;right: 10px !important;color: {text_color}!important;}@media only screen and (max-width: 600px) {#ez-cookie-dialog-wrapper #ez-cookie-dialog {margin-top: 5px !important;width: 100% !important;padding: 10px !important;border-width: 5px !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #button-row {flex-direction: column !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-cookie-options {flex-direction: column !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-necessary-cookies {margin-bottom: 5px !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog h2 {margin: 5px 0 !important;margin-right: 44px !important;font-size: 16px !important;}#ez-cookie-dialog-wrapper #ez-cookie-dialog #ez-cookie-table-box {overflow-y: auto !important;max-height: 100px !important;}}.cDuration {display: none;}',
+	wrapper: '<div id="ez-cookie-dialog-wrapper" class="ez_modal"> <div id="ez-cookie-dialog" class="ez_modal"> <select id="ez-cookie-language" onchange="ezCMP.changeLanguage(this.value)">{language-options}</select> <div id="ez-cookie-form"></div> </div></div>',
+	template:'<div id="ez-cookie-template"> <h2>{dialog-heading}</h2> <p>{dialog-body}</p><p><span id="button-row"> <span> <button id="ez-necessary-cookies" style="display:{decline-botton-text-display}" onclick="ezCMP.handleDeclineClick()">{decline-button-text}</button> <button id="ez-all-cookies" onclick="ezCMP.handleAcceptClick()">{accept-button-text}</button> </span> <span> <a id="ez-cookie-details" onclick="ezCMP.toggleDetails(true)" href="javascript:void(0);">{cookie-details-link}</a> </span> </span> </p><div id="ez-cookie-options" style="display:{cookie-options-display}"> <div class="ez-cookie-option"><label><input id="ez-cookie-option-necessary" type="checkbox" value="1" disabled checked/>{necessary}</label></div><div class="ez-cookie-option"><label><input id="ez-cookie-option-preference" type="checkbox" value="0"{preference-checked}/>{preference}</label></div><div class="ez-cookie-option"><label><input id="ez-cookie-option-statistics" type="checkbox" value="0"{statistics-checked}/>{statistics}</label></div><div class="ez-cookie-option"><label><input id="ez-cookie-option-marketing" type="checkbox" value="0"{marketing-checked}/>{marketing}</label></div><div class="ez-cookie-option"><button id="ez-ok-cookies" onclick="ezCMP.handleOkClick()">{ok-button-text}</button></div></div><div id="ez-cookie-details-container"> <div> <select onchange="ezCMP.loadDetails(this.value)"> <option value="necessary">{necessary}</option> <option value="preference">{preference}</option> <option value="statistics">{statistics}</option> <option value="marketing">{marketing}</option> <option value="unclassified">{unclassified}</option> </select> </div><div id="ez-cookie-details-description"></div><div style="overflow-x:auto;" id="ez-cookie-table-box"> <table id="ez-cookie-table"> <thead> <tr> <th>{column-name}</th> <th>{column-purpose}</th> <th>{column-pii}</th> <th class="cDuration">{column-duration}</th> </tr></thead> <tbody id="ez-cookie-table-body"> </tbody> </table> </div></div><p id="ez-about-cookies-text">{cookie-info}</p><div id="secondary-links"> <a id="ez-about-cookies" href="javascript:void(0);" onclick="ezCMP.toggleAbout()">{about-cookies-link}</a> <span class="bar">|</span> <a href="{privacy}" target="_privacy">{privacy-link}</a> </div></div>'
+};
+</script>
+<script type="text/javascript" src="https://ezodn.com/cmp/altconsent.js?v=9"></script>
+<script type="text/javascript"  async src="/utilcave_com/inc/ezcl.webp?cb=4"></script></body></html>
