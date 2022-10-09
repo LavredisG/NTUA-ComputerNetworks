@@ -5,4 +5,4 @@ Every LabX file includes:
 1) Tasks assigned
 2) Solutions
 3) Wireshark traffic captured for each task
-4) Some extra resources on each task subject
+4) Extra resources on each task subject
